@@ -5,6 +5,7 @@
 //  + All functions declared static to work around problem with GCC
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
 #include <dirent.h>
@@ -267,13 +268,12 @@ static void MISC_ProcessSound( BYTE* data, int length )
 
 static void MISC_ConvSoundToSigned( UBYTE* data, int length )
 {
+  BYTE* bdata = (BYTE*)data;
 	for(; length > 0; --length )
 	{
 		int val = *data;
-		
 		val -= 128;
-		
-		*((BYTE*)data)++ = val;
+		*bdata++ = val;
 	}
 }
 

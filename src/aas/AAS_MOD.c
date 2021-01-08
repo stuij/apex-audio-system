@@ -1,7 +1,9 @@
 #include "AAS_Shared.h"
 
+AAS_s16 AAS_mod_num AAS_IN_EWRAM = -1;
+AAS_u8 AAS_mod_num_chans AAS_IN_EWRAM = 0;
+
 static AAS_s16 AAS_mod_num_store AAS_IN_EWRAM = -2;
-static AAS_s16 AAS_mod_num AAS_IN_EWRAM = -1;
 static AAS_u16 AAS_mod_song_pos AAS_IN_EWRAM;
 static AAS_u16 AAS_mod_line_num AAS_IN_EWRAM;
 
@@ -38,7 +40,6 @@ static AAS_u8 AAS_mod_loop_start AAS_IN_EWRAM = 0;
 static AAS_s8 AAS_mod_loop_counter AAS_IN_EWRAM = 0;
 static AAS_BOOL AAS_mod_loop AAS_IN_EWRAM = AAS_TRUE;
 static AAS_u8 AAS_mod_last_filter_value AAS_IN_EWRAM = 0;
-static AAS_u8 AAS_mod_num_chans AAS_IN_EWRAM = 0;
 static AAS_BOOL AAS_mod_active_effects AAS_IN_EWRAM = AAS_FALSE;
 static AAS_s8 AAS_mod_next_song_pos AAS_IN_EWRAM = -1;
 

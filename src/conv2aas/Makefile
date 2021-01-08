@@ -20,7 +20,7 @@ LDFLAGS =
 # "-mno-cygwin" removed otherwise readdir() returns incorrect value
 
 # Name of output targets.
-TARGET = Conv2AAS.exe
+TARGET = conv2aas
 
 # C source files.
 SRC =	Main.o
@@ -76,4 +76,3 @@ clean:
 $(TARGET): $(GFX) $(SOUND) $(SRC)
 	$(LD) $(LDFLAGS) -o $@ $(SRC) $(GFX) $(SOUND) $(LIBS)
 	$(CROSS)size $@
-

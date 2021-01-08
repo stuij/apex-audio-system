@@ -3,9 +3,9 @@
 
 # Tools and flags.
 # CROSS = arm-thumb-elf-
-CROSS = /devkitadv/bin/
+CROSS = arm-none-eabi-
 CC = $(CROSS)gcc
-CFLAGS = -mthumb-interwork -fomit-frame-pointer -mapcs-32 -mcpu=arm7tdmi -ffast-math -fno-exceptions -fno-rtti -c
+CFLAGS = -mthumb-interwork -fomit-frame-pointer -mcpu=arm7tdmi -ffast-math -fno-exceptions -c
 # note: removed "-S", "-mapcs-stack-check -mapcs-frame" and "-Wall" above
 # added "-ffixed-r14" and "-mlong-calls" below to work around compiler bug
 # Optimise options: -funroll-loops
