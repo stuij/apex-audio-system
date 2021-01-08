@@ -1,0 +1,598 @@
+<html>
+<style type="text/css">
+<!--
+TD {font-size: 10pt; font-family: Verdana,Arial,Helvetica,sans-serif}
+BODY {font-size: 10pt; font-family: Verdana,Arial,Helvetica,sans-serif}
+A { text-decoration: none }
+a:hover { text-decoration: underline}
+pre {font-family: monospace}
+-->
+</style>
+
+<title>AAS Instructions</title>
+<body bgcolor="#FFFFFF" vlink="#990000" link="#990000" alink="#990000" text="#000000">
+
+<table border=0 width=100% cellpadding=0 cellspacing=0>
+<tr>
+<td nowrap valign=middle align=left>
+<table border=0 cellpadding=0 cellspacing=0>
+<tr>
+<td nowrap valign=middle align=left>
+<a href="http://www.apex-designs.net/tools_aas.html"><img src="images/aas_logo.gif" alt="[Image]" width=57 height=58 border=0></a>&nbsp;
+</td>
+<td nowrap valign=middle align=left>
+<b>APEX AUDIO SYSTEM</b><br>
+<i>Instruction Manual</i>
+</td>
+</tr>
+</table>
+</td>
+<td width=100% valign=middle align=center>
+<hr width=90%>
+</td>
+<td nowrap valign=middle align=right>
+<a href="index.html">intro</a> | <a href="getting_started.html">getting started</a> | <a href="conv2aas.html">conv2aas</a> | <a href="example.html">example</a> | <a href="faq.html">faq</a><br>
+<b>api :</b> <a href="api_index.html">index</a> | <a href="api_general.html">general</a> | <font color="#333377">sfx</font> | <a href="api_mod.html">mod</a> | <a href="api_misc.html">misc</a> | <a href="api_mixer.html">mixer</a>
+</td>
+</tr>
+</table>
+
+<br>
+
+<br><font size=+1 color="#333377">:: <a name="AAS_SFX_Play">AAS_SFX_Play</a></font>
+<blockquote>
+<table border=0 cellpadding=2 cellspacing=10>
+<tr>
+<td valign=top><b>PROTOTYPE</b></td>
+<td>int AAS_SFX_Play( int <i>channel</i>, int <i>sample_volume</i>, int <i>sample_frequency</i>, const AAS_s8* <i>sample_start</i>, const AAS_s8* <i>sample_end</i>, const AAS_s8* <i>sample_restart</i> );</td>
+</tr>
+<tr>
+<td valign=top><b>FUNCTION</b></td>
+<td>Starts playing the specified sample.</td>
+</tr>
+<tr>
+<td valign=top><b>PARAMETERS</b></td>
+<td><table border=0 cellpadding=2 cellspacing=2>
+<tr>
+<td><b>Name</b></td>
+<td><b>Valid values</b></td>
+<td><b>Meaning</b></td>
+</tr>
+<tr>
+<td valign=top><i>channel</i></td>
+<td valign=top>
+Depends on how AAS has been configured - see <a href="api_general.html#AAS_SetConfig">AAS_SetConfig</a>
+</td>
+<td valign=top>Specifies the channel you wish to use</td>
+</tr>
+<tr>
+<td valign=top><i>sample_volume</i></td>
+<td valign=top>
+0-64
+</td>
+<td valign=top>Specifies the volume you wish to play the sample at</td>
+</tr>
+<tr>
+<td valign=top><i>sample_frequency</i></td>
+<td valign=top>
+1-65535
+</td>
+<td valign=top>Specifies the frequency you wish to play the sample at</td>
+</tr>
+<tr>
+<td valign=top><i>sample_start</i></td>
+<td valign=top>
+AAS_DATA_SFX_START_???, where ??? is the name of the sample you wish to play (see your project's AAS_Data.h file for a complete list of all available samples)
+</td>
+<td valign=top>Specifies the start address of the sample you wish to play</td>
+</tr>
+<tr>
+<td valign=top><i>sample_end</i></td>
+<td valign=top>
+AAS_DATA_SFX_END_???, where ??? is the name of the sample you wish to play (see your project's AAS_Data.h file for a complete list of all available samples)
+</td>
+<td valign=top>Specifies the end address if the sample you wish to play</td>
+</tr>
+<td valign=top><i>sample_restart</i></td>
+<td valign=top>
+AAS_NULL or any address between AAS_DATA_SFX_START_??? (inclusive) and AAS_DATA_SFX_END_??? (exclusive), where ??? is the name of the sample you wish to play (see your project's AAS_Data.h file for a complete list of all available samples)
+</td>
+<td valign=top>Specifies the address the sample will loop to when it gets to the end. NULL indicates that the sample should not loop.</td>
+</tr>
+</tr>
+</table></td>
+<tr>
+<td valign=top><b>RETURNS</b></td>
+<td><table border=0 cellpadding=2 cellspacing=2>
+<tr>
+<td><i>AAS_OK</i></td>
+<td>:</td>
+<td>Function executed correctly.</td>
+</tr>
+<tr>
+<td><i>AAS_ERROR_INVALID_SAMPLE_ADDRESS</i></td>
+<td>:</td>
+<td>The <i>sample_start</i>, <i>sample_end</i> or <i>sample_restart</i> addresses specified are not valid.</td>
+</tr>
+<tr>
+<td><i>AAS_ERROR_VOLUME_OUT_OF_RANGE</i></td>
+<td>:</td>
+<td>The volume specified is not in the range 0-64.</td>
+</tr>
+<tr>
+<td><i>AAS_ERROR_FREQUENCY_OUT_OF_RANGE</i></td>
+<td>:</td>
+<td>The frequency specified is not in the range 1-65535.</td>
+</tr>
+<tr>
+<td><i>AAS_ERROR_CHANNEL_NOT_AVAILABLE</i></td>
+<td>:</td>
+<td>The channel you specified is not available to play a sample - see <a href="api_general.html#AAS_SetConfig">AAS_SetConfig</a>.</td>
+</tr>
+<tr>
+<td><i>AAS_ERROR_CALL_SET_CONFIG_FIRST</i></td>
+<td>:</td>
+<td><a href="api_general.html#AAS_SetConfig">AAS_SetConfig</a> has not been successfully called yet. It must be successfully called at least once before calling this function.</td>
+</tr>
+</table></td>
+</tr>
+<tr>
+<td valign=top><b>NOTES</b></td>
+<td>
+<p>Sample frequency is capped at 4 times the mixing rate specified when calling <a href="api_general.html#AAS_SetConfig">AAS_SetConfig</a>.</p>
+</td>
+</tr>
+</table>
+</blockquote>
+
+<br><font size=+1 color="#333377">:: <a name="AAS_SFX_ChannelExists">AAS_SFX_ChannelExists</a></font>
+<blockquote>
+<table border=0 cellpadding=2 cellspacing=10>
+<tr>
+<td valign=top><b>PROTOTYPE</b></td>
+<td>AAS_BOOL AAS_SFX_ChannelExists( int <i>channel</i> );</td>
+</tr>
+<tr>
+<td valign=top><b>FUNCTION</b></td>
+<td>Returns AAS_TRUE only if <a href="api_sfx.html#AAS_SFX_Play">AAS_SFX_Play</a> will succeed for this channel, otherwise returns AAS_FALSE.</td>
+</tr>
+<tr>
+<td valign=top><b>PARAMETERS</b></td>
+<td><table border=0 cellpadding=2 cellspacing=2>
+<tr>
+<td><b>Name</b></td>
+<td><b>Valid values</b></td>
+<td><b>Meaning</b></td>
+</tr>
+<tr>
+<td valign=top><i>channel</i></td>
+<td valign=top>
+Depends on how AAS has been configured - see <a href="api_general.html#AAS_SetConfig">AAS_SetConfig</a>
+</td>
+<td valign=top>Specifies the channel you wish to test</td>
+</tr>
+</table></td>
+<tr>
+<td valign=top><b>RETURNS</b></td>
+<td><table border=0 cellpadding=2 cellspacing=2>
+<tr>
+<td><i>AAS_FALSE</i></td>
+<td>:</td>
+<td>This channel is not currently a valid sound effect channel.</td>
+</tr>
+<tr>
+<td><i>AAS_TRUE</i></td>
+<td>:</td>
+<td>This channel is currently a valid sound effect channel.</td>
+</tr>
+</table></td>
+</tr>
+<tr>
+<td valign=top><b>NOTES</b></td>
+<td>
+<p>Whether a channel is available or not depends on how many channels were specified when calling <a href="api_general.html#AAS_SetConfig">AAS_SetConfig</a> and also on whether or not a MOD is currently playing. See <a href="api_general.html#AAS_SetConfig">AAS_SetConfig</a> for more information.</p>
+</td>
+</tr>
+</table>
+</blockquote>
+
+<br><font size=+1 color="#333377">:: <a name="AAS_SFX_IsActive">AAS_SFX_IsActive</a></font>
+<blockquote>
+<table border=0 cellpadding=2 cellspacing=10>
+<tr>
+<td valign=top><b>PROTOTYPE</b></td>
+<td>AAS_BOOL AAS_SFX_IsActive( int <i>channel</i> );</td>
+</tr>
+<tr>
+<td valign=top><b>FUNCTION</b></td>
+<td>Returns AAS_TRUE if channel is valid and active, AAS_FALSE otherwise.</td>
+</tr>
+<tr>
+<td valign=top><b>PARAMETERS</b></td>
+<td><table border=0 cellpadding=2 cellspacing=2>
+<tr>
+<td><b>Name</b></td>
+<td><b>Valid values</b></td>
+<td><b>Meaning</b></td>
+</tr>
+<tr>
+<td valign=top><i>channel</i></td>
+<td valign=top>
+Depends on how AAS has been configured - see <a href="api_general.html#AAS_SetConfig">AAS_SetConfig</a>
+</td>
+<td valign=top>Specifies the channel you wish to test</td>
+</tr>
+</table></td>
+<tr>
+<td valign=top><b>RETURNS</b></td>
+<td><table border=0 cellpadding=2 cellspacing=2>
+<tr>
+<td><i>AAS_FALSE</i></td>
+<td>:</td>
+<td>This is an invalid channel for sound effects, or it is valid but currently in use.</td>
+</tr>
+<tr>
+<td><i>AAS_TRUE</i></td>
+<td>:</td>
+<td>This is a valid sound effect channel and it currently has a sound effect playing.</td>
+</tr>
+</table></td>
+</tr>
+<tr>
+<td valign=top><b>NOTES</b></td>
+<td>
+<p>Whether or not a channel is valid depends on how many channels were specified when calling <a href="api_general.html#AAS_SetConfig">AAS_SetConfig</a> and also on whether or not a MOD is currently playing. See <a href="api_general.html#AAS_SetConfig">AAS_SetConfig</a> for more information. Provided the channel specified is valid, this function will return AAS_TRUE if there is another sound effect playing on this channel, and AAS_FALSE if there is not. It will always return AAS_FALSE if the channel is invalid.</p>
+</td>
+</tr>
+</table>
+</blockquote>
+
+<br><font size=+1 color="#333377">:: <a name="AAS_SFX_EndLoop">AAS_SFX_EndLoop</a></font>
+<blockquote>
+<table border=0 cellpadding=2 cellspacing=10>
+<tr>
+<td valign=top><b>PROTOTYPE</b></td>
+<td>int AAS_SFX_EndLoop( int <i>channel</i> );</td>
+</tr>
+<tr>
+<td valign=top><b>FUNCTION</b></td>
+<td>If a looping sample was playing in this channel, it will not loop again at end of the current iteration.</td>
+</tr>
+<tr>
+<td valign=top><b>PARAMETERS</b></td>
+<td><table border=0 cellpadding=2 cellspacing=2>
+<tr>
+<td><b>Name</b></td>
+<td><b>Valid values</b></td>
+<td><b>Meaning</b></td>
+</tr>
+<tr>
+<td valign=top><i>channel</i></td>
+<td valign=top>
+Depends on how AAS has been configured - see <a href="api_general.html#AAS_SetConfig">AAS_SetConfig</a>
+</td>
+<td valign=top>Specifies the channel you wish to change</td>
+</tr>
+</table></td>
+<tr>
+<td valign=top><b>RETURNS</b></td>
+<td><table border=0 cellpadding=2 cellspacing=2>
+<tr>
+<td><i>AAS_OK</i></td>
+<td>:</td>
+<td>The function suceeded.</td>
+</tr>
+<tr>
+<td><i>AAS_ERROR_CHANNEL_NOT_AVAILABLE</i></td>
+<td>:</td>
+<td>The channel specified is invalid.</td>
+</tr>
+<tr>
+<td><i>AAS_ERROR_CALL_SET_CONFIG_FIRST</i></td>
+<td>:</td>
+<td><a href="api_general.html#AAS_SetConfig">AAS_SetConfig</a> should be successfully called at least once before calling this function.</td>
+</tr>
+</table></td>
+</tr>
+<tr>
+<td valign=top><b>NOTES</b></td>
+<td>
+<p><i>None</i></p>
+</td>
+</tr>
+</table>
+</blockquote>
+
+<br><font size=+1 color="#333377">:: <a name="AAS_SFX_SetFrequency">AAS_SFX_SetFrequency</a></font>
+<blockquote>
+<table border=0 cellpadding=2 cellspacing=10>
+<tr>
+<td valign=top><b>PROTOTYPE</b></td>
+<td>int AAS_SFX_SetFrequency( int <i>channel</i>, int <i>sample_frequency</i> );</td>
+</tr>
+<tr>
+<td valign=top><b>FUNCTION</b></td>
+<td>Changes the frequency of the sample playing in the specified channel.</td>
+</tr>
+<tr>
+<td valign=top><b>PARAMETERS</b></td>
+<td><table border=0 cellpadding=2 cellspacing=2>
+<tr>
+<td><b>Name</b></td>
+<td><b>Valid values</b></td>
+<td><b>Meaning</b></td>
+</tr>
+<tr>
+<td valign=top><i>channel</i></td>
+<td valign=top>
+Depends on how AAS has been configured - see <a href="api_general.html#AAS_SetConfig">AAS_SetConfig</a>
+</td>
+<td valign=top>Specifies the channel you wish to change</td>
+</tr>
+<tr>
+<td valign=top><i>sample_frequency</i></td>
+<td valign=top>
+1-65535
+</td>
+<td valign=top>Specifies the new frequency you wish to play the sample at</td>
+</tr>
+</table></td>
+<tr>
+<td valign=top><b>RETURNS</b></td>
+<td><table border=0 cellpadding=2 cellspacing=2>
+<tr>
+<td><i>AAS_OK</i></td>
+<td>:</td>
+<td>The function suceeded.</td>
+</tr>
+<tr>
+<td><i>AAS_ERROR_FREQUENCY_OUT_OF_RANGE</i></td>
+<td>:</td>
+<td>The frequency specified in not in the range 1-65535.</td>
+</tr>
+<tr>
+<td><i>AAS_ERROR_CHANNEL_NOT_AVAILABLE</i></td>
+<td>:</td>
+<td>The channel specified is invalid.</td>
+</tr>
+<tr>
+<td><i>AAS_ERROR_CALL_SET_CONFIG_FIRST</i></td>
+<td>:</td>
+<td><a href="api_general.html#AAS_SetConfig">AAS_SetConfig</a> should be successfully called at least once before calling this function.</td>
+</tr>
+</table></td>
+</tr>
+<tr>
+<td valign=top><b>NOTES</b></td>
+<td>
+<p>Sample frequency is capped at four times the mixing rate specified when calling <a href="api_general.html#AAS_SetConfig">AAS_SetConfig</a>. If no sample is playing in the specified channel then this function has no effect.</p>
+</td>
+</tr>
+</table>
+</blockquote>
+
+<br><font size=+1 color="#333377">:: <a name="AAS_SFX_SetVolume">AAS_SFX_SetVolume</a></font>
+<blockquote>
+<table border=0 cellpadding=2 cellspacing=10>
+<tr>
+<td valign=top><b>PROTOTYPE</b></td>
+<td>int AAS_SFX_SetVolume( int <i>channel</i>, int <i>sample_volume</i> );</td>
+</tr>
+<tr>
+<td valign=top><b>FUNCTION</b></td>
+<td>Changes the volume of the sample playing in the specified channel.</td>
+</tr>
+<tr>
+<td valign=top><b>PARAMETERS</b></td>
+<td><table border=0 cellpadding=2 cellspacing=2>
+<tr>
+<td><b>Name</b></td>
+<td><b>Valid values</b></td>
+<td><b>Meaning</b></td>
+</tr>
+<tr>
+<td valign=top><i>channel</i></td>
+<td valign=top>
+Depends on how AAS has been configured - see <a href="api_general.html#AAS_SetConfig">AAS_SetConfig</a>
+</td>
+<td valign=top>Specifies the channel you wish to change</td>
+</tr>
+<tr>
+<td valign=top><i>sample_volume</i></td>
+<td valign=top>
+0-64
+</td>
+<td valign=top>Specifies the new volume you wish to play the sample at</td>
+</tr>
+</table></td>
+<tr>
+<td valign=top><b>RETURNS</b></td>
+<td><table border=0 cellpadding=2 cellspacing=2>
+<tr>
+<td><i>AAS_OK</i></td>
+<td>:</td>
+<td>The function suceeded.</td>
+</tr>
+<tr>
+<td><i>AAS_ERROR_VOLUME_OUT_OF_RANGE</i></td>
+<td>:</td>
+<td>The frequency specified in not in the range 0-64.</td>
+</tr>
+<tr>
+<td><i>AAS_ERROR_CHANNEL_NOT_AVAILABLE</i></td>
+<td>:</td>
+<td>The channel specified is invalid.</td>
+</tr>
+<tr>
+<td><i>AAS_ERROR_CALL_SET_CONFIG_FIRST</i></td>
+<td>:</td>
+<td><a href="api_general.html#AAS_SetConfig">AAS_SetConfig</a> should be successfully called at least once before calling this function.</td>
+</tr>
+</table></td>
+</tr>
+<tr>
+<td valign=top><b>NOTES</b></td>
+<td>
+<p>If no sample is playing in the specified channel then this function has no effect.</p>
+</td>
+</tr>
+</table>
+</blockquote>
+
+<br><font size=+1 color="#333377">:: <a name="AAS_SFX_Stop">AAS_SFX_Stop</a></font>
+<blockquote>
+<table border=0 cellpadding=2 cellspacing=10>
+<tr>
+<td valign=top><b>PROTOTYPE</b></td>
+<td>int AAS_SFX_Stop( int <i>channel</i> );</td>
+</tr>
+<tr>
+<td valign=top><b>FUNCTION</b></td>
+<td>Stops the sample currently playing in the specified channel.</td>
+</tr>
+<tr>
+<td valign=top><b>PARAMETERS</b></td>
+<td><table border=0 cellpadding=2 cellspacing=2>
+<tr>
+<td><b>Name</b></td>
+<td><b>Valid values</b></td>
+<td><b>Meaning</b></td>
+</tr>
+<tr>
+<td valign=top><i>channel</i></td>
+<td valign=top>
+Depends on how AAS has been configured - see <a href="api_general.html#AAS_SetConfig">AAS_SetConfig</a>
+</td>
+<td valign=top>Specifies the channel you wish to stop</td>
+</tr>
+</table></td>
+<tr>
+<td valign=top><b>RETURNS</b></td>
+<td><table border=0 cellpadding=2 cellspacing=2>
+<tr>
+<td><i>AAS_OK</i></td>
+<td>:</td>
+<td>The function suceeded.</td>
+</tr>
+<tr>
+<td><i>AAS_ERROR_CHANNEL_NOT_AVAILABLE</i></td>
+<td>:</td>
+<td>The channel specified is invalid.</td>
+</tr>
+<tr>
+<td><i>AAS_ERROR_CALL_SET_CONFIG_FIRST</i></td>
+<td>:</td>
+<td><a href="api_general.html#AAS_SetConfig">AAS_SetConfig</a> should be successfully called at least once before calling this function.</td>
+</tr>
+</table></td>
+</tr>
+<tr>
+<td valign=top><b>NOTES</b></td>
+<td>
+<p>If no sample is playing in the specified channel then this function has no effect.</p>
+</td>
+</tr>
+</table>
+</blockquote>
+
+<br><font size=+1 color="#333377">:: <a name="AAS_SFX_Resume">AAS_SFX_Resume</a></font>
+<blockquote>
+<table border=0 cellpadding=2 cellspacing=10>
+<tr>
+<td valign=top><b>PROTOTYPE</b></td>
+<td>int AAS_SFX_Resume( int <i>channel</i> );</td>
+</tr>
+<tr>
+<td valign=top><b>FUNCTION</b></td>
+<td>Resumes a channel that has been previously stopped.</td>
+</tr>
+<tr>
+<td valign=top><b>PARAMETERS</b></td>
+<td><table border=0 cellpadding=2 cellspacing=2>
+<tr>
+<td><b>Name</b></td>
+<td><b>Valid values</b></td>
+<td><b>Meaning</b></td>
+</tr>
+<tr>
+<td valign=top><i>channel</i></td>
+<td valign=top>
+Depends on how AAS has been configured - see <a href="api_general.html#AAS_SetConfig">AAS_SetConfig</a>
+</td>
+<td valign=top>Specifies the channel you wish to resume</td>
+</tr>
+</table></td>
+<tr>
+<td valign=top><b>RETURNS</b></td>
+<td><table border=0 cellpadding=2 cellspacing=2>
+<tr>
+<td><i>AAS_OK</i></td>
+<td>:</td>
+<td>The function suceeded.</td>
+</tr>
+<tr>
+<td><i>AAS_ERROR_CHANNEL_NOT_AVAILABLE</i></td>
+<td>:</td>
+<td>The channel specified is invalid.</td>
+</tr>
+<tr>
+<td><i>AAS_ERROR_CALL_SET_CONFIG_FIRST</i></td>
+<td>:</td>
+<td><a href="api_general.html#AAS_SetConfig">AAS_SetConfig</a> should be successfully called at least once before calling this function.</td>
+</tr>
+<tr>
+<td><i>AAS_ERROR_CHANNEL_ACTIVE</i></td>
+<td>:</td>
+<td>The channel is already active so it cannot be resumed.</td>
+</tr>
+<tr>
+<td><i>AAS_ERROR_CHANNEL_UNRESUMEABLE</i></td>
+<td>:</td>
+<td>This channel has either never been used or is inactive because the sample finished.</td>
+</tr>
+</table></td>
+</tr>
+<tr>
+<td valign=top><b>NOTES</b></td>
+<td>
+<p><i>None</i></p>
+</td>
+</tr>
+</table>
+</blockquote>
+
+<br><font size=+1 color="#333377">:: <a name="AAS_SFX_GetNumChannels">AAS_SFX_GetNumChannels</a></font>
+<blockquote>
+<table border=0 cellpadding=2 cellspacing=10>
+<tr>
+<td valign=top><b>PROTOTYPE</b></td>
+<td>int AAS_SFX_GetNumChannels();</td>
+</tr>
+<tr>
+<td valign=top><b>FUNCTION</b></td>
+<td>Returns the number of SFX channels that are currently available.</td>
+</tr>
+<tr>
+<td valign=top><b>PARAMETERS</b></td>
+<td><i>None</i></td>
+<tr>
+<td valign=top><b>RETURNS</b></td>
+<td><table border=0 cellpadding=2 cellspacing=2>
+<tr>
+<td><i>0-16</i></td>
+<td>:</td>
+<td>The number of SFX channels that are currently available.</td>
+</tr>
+</table></td>
+</tr>
+<tr>
+<td valign=top><b>NOTES</b></td>
+<td>
+<p><i>None</i></p>
+</td>
+</tr>
+</table>
+</blockquote>
+
+</body>
+</html>

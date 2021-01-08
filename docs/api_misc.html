@@ -1,0 +1,163 @@
+<html>
+<style type="text/css">
+<!--
+TD {font-size: 10pt; font-family: Verdana,Arial,Helvetica,sans-serif}
+BODY {font-size: 10pt; font-family: Verdana,Arial,Helvetica,sans-serif}
+A { text-decoration: none }
+a:hover { text-decoration: underline}
+pre {font-family: monospace}
+-->
+</style>
+
+<title>AAS Instructions</title>
+<body bgcolor="#FFFFFF" vlink="#990000" link="#990000" alink="#990000" text="#000000">
+
+<table border=0 width=100% cellpadding=0 cellspacing=0>
+<tr>
+<td nowrap valign=middle align=left>
+<table border=0 cellpadding=0 cellspacing=0>
+<tr>
+<td nowrap valign=middle align=left>
+<a href="http://www.apex-designs.net/tools_aas.html"><img src="images/aas_logo.gif" alt="[Image]" width=57 height=58 border=0></a>&nbsp;
+</td>
+<td nowrap valign=middle align=left>
+<b>APEX AUDIO SYSTEM</b><br>
+<i>Instruction Manual</i>
+</td>
+</tr>
+</table>
+</td>
+<td width=100% valign=middle align=center>
+<hr width=90%>
+</td>
+<td nowrap valign=middle align=right>
+<a href="index.html">intro</a> | <a href="getting_started.html">getting started</a> | <a href="conv2aas.html">conv2aas</a> | <a href="example.html">example</a> | <a href="faq.html">faq</a><br>
+<b>api :</b> <a href="api_index.html">index</a> | <a href="api_general.html">general</a> | <a href="api_sfx.html">sfx</a> | <a href="api_mod.html">mod</a> | <font color="#333377">misc</font> | <a href="api_mixer.html">mixer</a>
+</td>
+</tr>
+</table>
+
+<br>
+
+<br><font size=+1 color="#333377">:: <a name="AAS_GetOutputBufferAddress">AAS_GetOutputBufferAddress</a></font>
+<blockquote>
+<table border=0 cellpadding=2 cellspacing=10>
+<tr>
+<td valign=top><b>PROTOTYPE</b></td>
+<td>const AAS_s8* AAS_GetOutputBufferAddress( int <i>buffer</i> );</td>
+</tr>
+<tr>
+<td valign=top><b>FUNCTION</b></td>
+<td>Gets the address of the specified mixing buffer. Can be used to make oscilliscope displays of the current output.</td>
+</tr>
+<tr>
+<td valign=top><b>PARAMETERS</b></td>
+<td><table border=0 cellpadding=2 cellspacing=2>
+<tr>
+<td><b>Name</b></td>
+<td><b>Valid values</b></td>
+<td><b>Meaning</b></td>
+</tr>
+<tr>
+<td valign=top><i>buffer</i></td>
+<td valign=top>
+0 or 1
+</td>
+<td valign=top>Specifies direct sound channel you want to get the mixing buffer for. 0 = Direct Sound A, 1 = Direct Sound B.</td>
+</tr>
+</table></td>
+</tr>
+<tr>
+<td valign=top><b>RETURNS</b></td>
+<td><table border=0 cellpadding=2 cellspacing=2>
+<tr>
+<td><i>AAS_NULL</i></td>
+<td>:</td>
+<td>The buffer you requested does not exist or is currently not being used (during a period of silence, for example).</td>
+</tr>
+<tr>
+<td><i>Any valid address</i></td>
+<td>:</td>
+<td>The address of the start of the mixing buffer currently being used for the specified buffer.</td>
+</tr>
+</table></td>
+</tr>
+<tr>
+<td valign=top><b>NOTES</b></td>
+<td>
+<p>Altering the values found in the mixing buffer may corrupt the sound output.</p>
+</td>
+</tr>
+</table>
+</blockquote>
+
+<br><font size=+1 color="#333377">:: <a name="AAS_GetOutputBufferLength">AAS_GetOutputBufferLength</a></font>
+<blockquote>
+<table border=0 cellpadding=2 cellspacing=10>
+<tr>
+<td valign=top><b>PROTOTYPE</b></td>
+<td>int AAS_GetOutputBufferLength();</td>
+</tr>
+<tr>
+<td valign=top><b>FUNCTION</b></td>
+<td>Gets the current length of the mixing buffer in bytes.</td>
+</tr>
+<tr>
+<td valign=top><b>PARAMETERS</b></td>
+<td><i>None</i></td>
+</tr>
+<tr>
+<td valign=top><b>RETURNS</b></td>
+<td><table border=0 cellpadding=2 cellspacing=2>
+<tr>
+<td><i>Any integer</i></td>
+<td>:</td>
+<td>The current length of the mixing buffer in bytes.</td>
+</tr>
+</table></td>
+</tr>
+<tr>
+<td valign=top><b>NOTES</b></td>
+<td>
+<p>Altering the values found in the mixing buffer may corrupt the sound output.</p>
+</td>
+</tr>
+</table>
+</blockquote>
+
+<br><font size=+1 color="#333377">:: <a name="AAS_GetActualMixRate">AAS_GetActualMixRate</a></font>
+<blockquote>
+<table border=0 cellpadding=2 cellspacing=10>
+<tr>
+<td valign=top><b>PROTOTYPE</b></td>
+<td>int AAS_GetActualMixRate();</td>
+</tr>
+<tr>
+<td valign=top><b>FUNCTION</b></td>
+<td>Returns the current mixing rate in hertz.</td>
+</tr>
+<tr>
+<td valign=top><b>PARAMETERS</b></td>
+<td><i>None</i></td>
+</tr>
+<tr>
+<td valign=top><b>RETURNS</b></td>
+<td><table border=0 cellpadding=2 cellspacing=2>
+<tr>
+<td><i>800-32000</i></td>
+<td>:</td>
+<td>The current mixing rate in hertz.</td>
+</tr>
+</table></td>
+</tr>
+<tr>
+<td valign=top><b>NOTES</b></td>
+<td>
+<p>This function will always return the mixing rate you specified when you called <a href="api_general.html#AAS_SetConfig">AAS_SetConfig</a> if you disabled dynamic mixing. With dynamic mixing enabled this value may be less than the rate you specified.</p>
+</td>
+</tr>
+</table>
+</blockquote>
+
+</body>
+</html>

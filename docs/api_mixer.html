@@ -1,0 +1,366 @@
+<html>
+<style type="text/css">
+<!--
+TD {font-size: 10pt; font-family: Verdana,Arial,Helvetica,sans-serif}
+BODY {font-size: 10pt; font-family: Verdana,Arial,Helvetica,sans-serif}
+A { text-decoration: none }
+a:hover { text-decoration: underline}
+pre {font-family: monospace}
+-->
+</style>
+
+<title>AAS Instructions</title>
+<body bgcolor="#FFFFFF" vlink="#990000" link="#990000" alink="#990000" text="#000000">
+
+<table border=0 width=100% cellpadding=0 cellspacing=0>
+<tr>
+<td nowrap valign=middle align=left>
+<table border=0 cellpadding=0 cellspacing=0>
+<tr>
+<td nowrap valign=middle align=left>
+<a href="http://www.apex-designs.net/tools_aas.html"><img src="images/aas_logo.gif" alt="[Image]" width=57 height=58 border=0></a>&nbsp;
+</td>
+<td nowrap valign=middle align=left>
+<b>APEX AUDIO SYSTEM</b><br>
+<i>Instruction Manual</i>
+</td>
+</tr>
+</table>
+</td>
+<td width=100% valign=middle align=center>
+<hr width=90%>
+</td>
+<td nowrap valign=middle align=right>
+<a href="index.html">intro</a> | <a href="getting_started.html">getting started</a> | <a href="conv2aas.html">conv2aas</a> | <a href="example.html">example</a> | <a href="faq.html">faq</a><br>
+<b>api :</b> <a href="api_index.html">index</a> | <a href="api_general.html">general</a> | <a href="api_sfx.html">sfx</a> | <a href="api_mod.html">mod</a> | <a href="api_misc.html">misc</a> | <font color="#333377">mixer</font>
+</td>
+</tr>
+</table>
+
+<br>
+
+<br><font size=+1 color="#333377">:: <a name="AAS_MixAudio">AAS_MixAudio</a></font>
+<blockquote>
+<table border=0 cellpadding=2 cellspacing=10>
+<tr>
+<td valign=top><b>PROTOTYPE</b></td>
+<td>void AAS_MixAudio( AAS_s8* <i>mix_buffer</i>, struct AAS_Channel <i>chans</i>[], int <i>iterations</i> );</td>
+</tr>
+<tr>
+<td valign=top><b>FUNCTION</b></td>
+<td>Mixes multiple sounds into a single mixing buffer. This function is in IWRAM and so it must be called using AAS_INIT_BRANCH and AAS_BRANCH() as described in "AAS_Mixer.h". <b>This function should not normally be directly called.</b></td>
+</tr>
+<tr>
+<td valign=top><b>PARAMETERS</b></td>
+<td><table border=0 cellpadding=2 cellspacing=2>
+<tr>
+<td><b>Name</b></td>
+<td><b>Valid values</b></td>
+<td><b>Meaning</b></td>
+</tr>
+<tr>
+<td valign=top><i>mix_buffer</i></td>
+<td valign=top>
+Any writeable word-aligned address at least <i>iterations</i>*16 bytes in size
+</td>
+<td valign=top>Specifies the address of the mixing buffer you wish to use</td>
+</tr>
+<tr>
+<td valign=top><i>chans</i></td>
+<td valign=top>
+Any writeable word-aligned address pointing to valid channel data
+</td>
+<td valign=top>The start address of an array of 8 AAS_Channel structures</td>
+</tr>
+<tr>
+<td valign=top><i>iterations</i></td>
+<td valign=top>
+1-127
+</td>
+<td valign=top>The number of 16 byte chunks you wish the function to write to <i>mix_buffer</i></td>
+</tr>
+</table></td>
+</tr>
+<tr>
+<td valign=top><b>RETURNS</b></td>
+<td><i>Nothing</i></td>
+</tr>
+<tr>
+<td valign=top><b>NOTES</b></td>
+<td>
+<p>This function (and the others in this section of the documentation) should only be used if you've got a strong reason for needing to access the mixing routine directly. Because of this, it isn't included in the usual "AAS.h" header file - you'll need to include "AAS_Mixer.h" instead, which is in the "AASFiles\LibAAS\LowLevelAccess" folder of the AAS SDK. A good understanding of the GBA's sound hardware is required to use this routine directly.</p>
+
+<p>The AAS_Channel structure is defined in the header file as follows:</p>
+
+<pre>
+struct AAS_Channel
+{
+	AAS_u8 effective_volume;
+	AAS_BOOL active;
+	AAS_u8 volume;
+	AAS_u8 pos_fraction;
+	AAS_u16 frequency;
+	AAS_u16 delta;
+	const AAS_s8* pos;
+	const AAS_s8* end;
+	AAS_u32 loop_length;
+};</pre>
+
+<p>The meaning of these elements is shown below:</p>
+
+<table border=0 cellpadding=2 cellspacing=2>
+<tr>
+<td><b>Name</b></td>
+<td><b>Valid values</b></td>
+<td><b>Meaning</b></td>
+</tr>
+<tr>
+<td valign=top><i>effective_volume</i></td>
+<td valign=top>
+0-255 (see below)
+</td>
+<td valign=top>Specifies the volume of this channel. Channels with an effective_volume of zero will not be processed. This should usually be set to (active?volume:0) before calling <a href="api_mixer.html#AAS_MixAudio">AAS_MixAudio</a>. Zero will be written here by the mixer when a non-looping sample finishes.</td>
+</tr>
+<tr>
+<td valign=top><i>active</i></td>
+<td valign=top>
+AAS_TRUE or AAS_FALSE
+</td>
+<td valign=top><a href="api_mixer.html#AAS_MixAudio">AAS_MixAudio</a> does not read this value but it does write AAS_FALSE here when a non-looping sample finishes. (See <i>effective_volume</i>.)</td>
+</tr>
+</tr>
+<tr>
+<td valign=top><i>volume</i></td>
+<td valign=top>
+0-255
+</td>
+<td valign=top>Not directly used by <a href="api_mixer.html#AAS_MixAudio">AAS_MixAudio</a>. (See <i>effective_volume</i>.)</td>
+</tr>
+<tr>
+<td valign=top><i>pos_fraction</i></td>
+<td valign=top>
+Any
+</td>
+<td valign=top>The fractional component of the sample position. This value should be reset to zero when a sample is started, but other than that it should only be changed by <a href="api_mixer.html#AAS_MixAudio">AAS_MixAudio</a>.</td>
+</tr>
+<tr>
+<td valign=top><i>frequency</i></td>
+<td valign=top>
+1-65535
+</td>
+<td valign=top>Not directly used by <a href="api_mixer.html#AAS_MixAudio">AAS_MixAudio</a>. (See <i>delta</i>.)</td>
+</tr>
+<tr>
+<td valign=top><i>delta</i></td>
+<td valign=top>
+1-4095
+</td>
+<td valign=top>Specifies how much to add on to the sample position per byte in 2.10 fixed point format. Usually set to ((frequency<<10)/mixing_frequency) before calling <a href="api_mixer.html#AAS_MixAudio">AAS_MixAudio</a>.</td>
+</tr>
+<tr>
+<td valign=top><i>pos</i></td>
+<td valign=top>
+Any valid address
+</td>
+<td valign=top>The address of the current sample position. The fractional component is stored in <i>pos_fraction</i>.</td>
+</tr>
+<tr>
+<td valign=top><i>end</i></td>
+<td valign=top>
+Any valid address
+</td>
+<td valign=top>The address of the end of the sample.</td>
+</tr>
+<tr>
+<td valign=top><i>loop_length</i></td>
+<td valign=top>
+Any
+</td>
+<td valign=top>The number of bytes from the end of the sample back to the loop restart point. Zero indicates that the sample should not loop.</td>
+</tr>
+</table>
+
+<p><a href="api_mixer.html#AAS_MixAudio">AAS_MixAudio</a> expects to be passed a pointer to an array of 8 AAS_Channels - this is referred to as a <i>channel set</i>. An array containing 16 AAS_Channels is provided and is called AAS_channels[]. This can effectively be used as two seperate arrays of 8 AAS_Channels by calling using either &amp;AAS_channels[0] or &amp;AAS_channels[8] as a parameter. This allows a total of 16 channels - 8 per Direct Sound output. (The maximum number of channels per set is specified using the <a href="api_mixer.html#AAS_MixAudio_SetMaxChans_2">AAS_MixAudio_SetMaxChans_x</a> functions - the default is 4.)</p>
+
+<p>Also note that the total volume (i.e. the sum of the <i>effective_volume</i>s for all the channels in the set) must not exceed 256 (except if AAS_MIXAUDIO_MODE_BOOST is used (see <a href="api_mixer.html#AAS_MixAudio_SetMode">AAS_MixAudio_SetMode</a>), in which case the total must not exceed 128). If it does, the sound output will be distorted. This means that, despite 255 (127 with AAS_MIXAUDIO_MODE_BOOST) being a valid volume for a channel as indicated above, it is only safe to set a volume this high if the total effective_volume of the remaining channels in the channel set is 0 or 1. This means that if you intend to use all 8 channels in the set then you should generally use volumes in the range 0-32 (0-16 with AAS_MIXAUDIO_MODE_BOOST).</p>
+
+<p>A few other things worth noting about this routine:</p>
+<ul>
+<li>It doesn't increment <i>pos</i> if a channel's <i>effective_volume</i> is 0. You'll need to increment it yourself if you want this to happen.</li>
+<li>Do not call <a href="api_mixer.html#AAS_MixAudio">AAS_MixAudio</a> if there are no active channels in the set. Use a seperate routine to write out zeroes to the buffer or use a pre-calculated buffer full of zeroes instead.</li>
+<li>The dynamic mixing rate feature is also handled by a different routine so you cannot use this feature if you are accessing <a href="api_mixer.html#AAS_MixAudio">AAS_MixAudio</a> directly without implimenting your own code to change the mixing rate.</li>
+<li>All sample data should be 8-bit signed and clipped to the range -127 to 127. (Rather than the usual range of -128 to 127.) If this extra bit of clipping is not done then the sound may occasionally distort. <a href="conv2aas.html">Conv2AAS</a> does this automatically, but if you're using a different program to import your sample data (not recommended) then you will need to preprocess the data to avoid this problem.</li>
+<li>The mixer does not sanity check the input parameters. The result of passing illegal parameters is undefined.</li>
+<li><a href="api_mixer.html#AAS_MixAudio">AAS_MixAudio</a> uses DMA 3, which may cause problems if it is called via an interrupt whilst another bit of code is halfway through initialising a DMA 3 transfer. <a href="api_general.html#AAS_DoDMA3">AAS_DoDMA3</a> should be used to prevent this problem. This routine works by writing all the values required to start a DMA transfer with a single stmia instruction. You can do this in your own code as an alternative to calling <a href="api_general.html#AAS_DoDMA3">AAS_DoDMA3</a>.</li>
+<li>You will need to set up your own sound handling routines and interrupts around the mixer to get it work usefully. This is normally handled by AAS but this is not possible when <a href="api_mixer.html#AAS_MixAudio">AAS_MixAudio</a> is directly accessed. It should not be used in conjunction with any of the standard AAS commands with the exception of <a href="api_general.html#AAS_ShowLogo">AAS_ShowLogo</a> and <a href="api_general.html#AAS_DoDMA3">AAS_DoDMA3</a>.</li>
+<li>Also bare in mind that the API for this routine is more likely to change in future versions of AAS than those for the other routines. [Last changed in v1.11]</li>
+</ul>
+
+</td>
+</tr>
+</table>
+</blockquote>
+
+<br><font size=+1 color="#333377">:: <a name="AAS_MixAudio_NoChange">AAS_MixAudio_NoChange</a></font>
+<blockquote>
+<table border=0 cellpadding=2 cellspacing=10>
+<tr>
+<td valign=top><b>PROTOTYPE</b></td>
+<td>void AAS_MixAudio_NoChange( AAS_s8* <i>mix_buffer</i>, struct AAS_Channel <i>chans</i>[], int <i>iterations</i> );</td>
+</tr>
+<tr>
+<td valign=top><b>FUNCTION</b></td>
+<td>Mixes multiple sounds into a single mixing buffer. This function should only be called if there are no changes to chans[] since a previous call to <a href="api_mixer.html#AAS_MixAudio">AAS_MixAudio</a>. Do not call twice in a row. This function is in IWRAM and so it must be called using AAS_INIT_BRANCH and AAS_BRANCH() as described in "AAS_Mixer.h". <b>This function should not normally be directly called - see <a href="api_mixer.html#AAS_MixAudio">AAS_MixAudio</a>.</b></td>
+</tr>
+<tr>
+<td valign=top><b>PARAMETERS</b></td>
+<td>See <a href="api_mixer.html#AAS_MixAudio">AAS_MixAudio</a>.</td>
+</tr>
+<tr>
+<td valign=top><b>RETURNS</b></td>
+<td><i>Nothing</i></td>
+</tr>
+<tr>
+<td valign=top><b>NOTES</b></td>
+<td>
+<p>This function works in the same way as <a href="api_mixer.html#AAS_MixAudio">AAS_MixAudio</a>, except that it is slightly faster but should only be called if there are no changes to chans[] since a previous call to <a href="api_mixer.html#AAS_MixAudio">AAS_MixAudio</a>. It should also not be called twice in a row.</p>
+</td>
+</tr>
+</table>
+</blockquote>
+
+<br><font size=+1 color="#333377">:: <a name="AAS_MixAudio_SetMode">AAS_MixAudio_SetMode</a></font>
+<blockquote>
+<table border=0 cellpadding=2 cellspacing=10>
+<tr>
+<td valign=top><b>PROTOTYPE</b></td>
+<td>void AAS_MixAudio_SetMode( int <i>mode</i> );</td>
+</tr>
+<tr>
+<td valign=top><b>FUNCTION</b></td>
+<td>Enable/disable volume boost and (optional) clipping. This function should only be called if you can be 100% sure that <a href="api_mixer.html#AAS_MixAudio">AAS_MixAudio</a> and <a href="api_mixer.html#AAS_MixAudio_NoChange">AAS_MixAudio_NoChange</a> won't interrupt it. <b>This function should not normally be directly called - see <a href="api_mixer.html#AAS_MixAudio">AAS_MixAudio</a>.</b></td>
+</tr>
+<tr>
+<td valign=top><b>PARAMETERS</b></td>
+<td><table border=0 cellpadding=2 cellspacing=2>
+<tr>
+<td><b>Name</b></td>
+<td><b>Valid values</b></td>
+<td><b>Meaning</b></td>
+</tr>
+<tr>
+<td valign=top><i>mode</i></td>
+<td valign=top>
+AAS_MIXAUDIO_MODE_NORMAL<br>
+AAS_MIXAUDIO_MODE_BOOST<br>
+AAS_MIXAUDIO_MODE_BOOSTANDCLIP
+</td>
+<td valign=top>Specifies whether the volume should be boosted and (optionally) clipped</td>
+</tr>
+</table></td>
+</tr>
+<tr>
+<td valign=top><b>RETURNS</b></td>
+<td><i>Nothing</i></td>
+</tr>
+<tr>
+<td valign=top><b>NOTES</b></td>
+<td>
+<p>The three mixing modes work as follows:</p>
+
+<ul>
+<li>AAS_MIXAUDIO_MODE_NORMAL. No volume boosting. The total volume of the channel set must be <= 256. This is the default setting.</li>
+<li>AAS_MIXAUDIO_MODE_BOOST. All volumes are doubled. The output is not clipped so the total volume of the channel set must be <= 128 otherwise severe distortion will occur.</li>
+<li>AAS_MIXAUDIO_MODE_BOOSTANDCLIP. All volumes are doubled. The output is clipped so the total volume of the channel set must be <= 256.</li>
+</ul>
+</td>
+</tr>
+</table>
+</blockquote>
+
+<br><font size=+1 color="#333377">:: <a name="AAS_MixAudio_SetMaxChans_2">AAS_MixAudio_SetMaxChans_2</a></font>
+<blockquote>
+<table border=0 cellpadding=2 cellspacing=10>
+<tr>
+<td valign=top><b>PROTOTYPE</b></td>
+<td>void AAS_MixAudio_SetMaxChans_2();</td>
+</tr>
+<tr>
+<td valign=top><b>FUNCTION</b></td>
+<td>Sets the maximum number of channels in the set to 2. This function should only be called if you can be 100% sure that <a href="api_mixer.html#AAS_MixAudio">AAS_MixAudio</a> and <a href="api_mixer.html#AAS_MixAudio_NoChange">AAS_MixAudio_NoChange</a> won't interrupt it. <b>This function should not normally be directly called - see <a href="api_mixer.html#AAS_MixAudio">AAS_MixAudio</a>.</b></td>
+</tr>
+<tr>
+<td valign=top><b>PARAMETERS</b></td>
+<td><i>None</i></td>
+</tr>
+<tr>
+<td valign=top><b>RETURNS</b></td>
+<td><i>Nothing</i></td>
+</tr>
+<tr>
+<td valign=top><b>NOTES</b></td>
+<td>
+<p>For best performance, the maximum number of channels in the set should be set to the lowest number that is >= the actual number of channels in the set.</p>
+</td>
+</tr>
+</table>
+</blockquote>
+
+<br><font size=+1 color="#333377">:: <a name="AAS_MixAudio_SetMaxChans_4">AAS_MixAudio_SetMaxChans_4</a></font>
+<blockquote>
+<table border=0 cellpadding=2 cellspacing=10>
+<tr>
+<td valign=top><b>PROTOTYPE</b></td>
+<td>void AAS_MixAudio_SetMaxChans_4();</td>
+</tr>
+<tr>
+<td valign=top><b>FUNCTION</b></td>
+<td>Sets the maximum number of channels in the set to 4 (the default). This function should only be called if you can be 100% sure that <a href="api_mixer.html#AAS_MixAudio">AAS_MixAudio</a> and <a href="api_mixer.html#AAS_MixAudio_NoChange">AAS_MixAudio_NoChange</a> won't interrupt it. <b>This function should not normally be directly called - see <a href="api_mixer.html#AAS_MixAudio">AAS_MixAudio</a>.</b></td>
+</tr>
+<tr>
+<td valign=top><b>PARAMETERS</b></td>
+<td><i>None</i></td>
+</tr>
+<tr>
+<td valign=top><b>RETURNS</b></td>
+<td><i>Nothing</i></td>
+</tr>
+<tr>
+<td valign=top><b>NOTES</b></td>
+<td>
+<p>For best performance, the maximum number of channels in the set should be set to the lowest number that is >= the actual number of channels in the set.</p>
+</td>
+</tr>
+</table>
+</blockquote>
+
+<br><font size=+1 color="#333377">:: <a name="AAS_MixAudio_SetMaxChans_8">AAS_MixAudio_SetMaxChans_8</a></font>
+<blockquote>
+<table border=0 cellpadding=2 cellspacing=10>
+<tr>
+<td valign=top><b>PROTOTYPE</b></td>
+<td>void AAS_MixAudio_SetMaxChans_8();</td>
+</tr>
+<tr>
+<td valign=top><b>FUNCTION</b></td>
+<td>Sets the maximum number of channels in the set to 8. This function should only be called if you can be 100% sure that <a href="api_mixer.html#AAS_MixAudio">AAS_MixAudio</a> and <a href="api_mixer.html#AAS_MixAudio_NoChange">AAS_MixAudio_NoChange</a> won't interrupt it. <b>This function should not normally be directly called - see <a href="api_mixer.html#AAS_MixAudio">AAS_MixAudio</a>.</b></td>
+</tr>
+<tr>
+<td valign=top><b>PARAMETERS</b></td>
+<td><i>None</i></td>
+</tr>
+<tr>
+<td valign=top><b>RETURNS</b></td>
+<td><i>Nothing</i></td>
+</tr>
+<tr>
+<td valign=top><b>NOTES</b></td>
+<td>
+<p>For best performance, the maximum number of channels in the set should be set to the lowest number that is >= the actual number of channels in the set.</p>
+</td>
+</tr>
+</table>
+</blockquote>
+
+</body>
+</html>

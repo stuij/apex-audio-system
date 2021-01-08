@@ -1,0 +1,74 @@
+<html>
+<style type="text/css">
+<!--
+TD {font-size: 10pt; font-family: Verdana,Arial,Helvetica,sans-serif}
+BODY {font-size: 10pt; font-family: Verdana,Arial,Helvetica,sans-serif}
+A { text-decoration: none }
+a:hover { text-decoration: underline}
+pre {font-family: monospace}
+-->
+</style>
+
+<title>AAS Instructions</title>
+<body bgcolor="#FFFFFF" vlink="#990000" link="#990000" alink="#990000" text="#000000">
+
+<table border=0 width=100% cellpadding=0 cellspacing=0>
+<tr>
+<td nowrap valign=middle align=left>
+<table border=0 cellpadding=0 cellspacing=0>
+<tr>
+<td nowrap valign=middle align=left>
+<a href="http://www.apex-designs.net/tools_aas.html"><img src="images/aas_logo.gif" alt="[Image]" width=57 height=58 border=0></a>&nbsp;
+</td>
+<td nowrap valign=middle align=left>
+<b>APEX AUDIO SYSTEM</b><br>
+<i>Instruction Manual</i>
+</td>
+</tr>
+</table>
+</td>
+<td width=100% valign=middle align=center>
+<hr width=90%>
+</td>
+<td nowrap valign=middle align=right>
+<a href="index.html">intro</a> | <font color="#333377">getting started</font> | <a href="conv2aas.html">conv2aas</a> | <a href="example.html">example</a> | <a href="faq.html">faq</a><br>
+<b>api :</b> <a href="api_index.html">index</a> | <a href="api_general.html">general</a> | <a href="api_sfx.html">sfx</a> | <a href="api_mod.html">mod</a> | <a href="api_misc.html">misc</a> | <a href="api_mixer.html">mixer</a>
+</td>
+</tr>
+</table>
+
+<br>
+
+<br><font size=+1 color="#333377">:: First Steps</font>
+<blockquote>
+
+<p>First of all, the user must include the AAS header files ("AAS.h" and, optionally, "AAS_Mixer.h") and link "libAAS.a" with their project. Next, the interrupt handling routines must be set up so that a Timer 1 interrupt results in a call to <a href="api_general.html#AAS_Timer1InterruptHandler">AAS_Timer1InterruptHandler</a> (or <a href="api_general.html#AAS_FastTimer1InterruptHandler">AAS_FastTimer1InterruptHandler</a> with a seperate call to <a href="api_general.html#AAS_DoWork">AAS_DoWork</a> later if "AAS_MultipleInterrupts" are being used). The <a href="example.html">example code</a> included with AAS demonstrates how to do this, and users are encouraged to reuse the code shown in their own projects.</p>
+
+<p>It is also recommended that the project's makefile be modified so that <a href="conv2aas.html">Conv2AAS</a> is automatically called when the project is compiled, and its output is assembled and linked with the main code. The makefile included with the <a href="example.html">example code</a> shows how to do this.</p>
+
+<p>It is also important that none of the following resources are used in your code as they are required by AAS:
+<ul>
+<li><b>DMA1 and DMA2.</b> These are used to transfer the sound data.</li>
+<li><b>Timer 0 and Timer 1.</b> These are used to syncronise the sound output.</li>
+</ul>
+</p>
+
+<p>Also note that DMA3 can be used, but only via the <a href="api_general.html#AAS_DoDMA3">AAS_DoDMA3</a> function call or with a single stmia instruction. Once these steps have been successfully completed AAS should be ready for use. A detailed description of AAS's API can be found <a href="api_index.html">here</a> and some example code can be found <a href="example.html">here</a>.</p>
+
+</blockquote>
+<br><font size=+1 color="#333377">:: Things To Look Out For</font>
+<blockquote>
+
+<p>Whilst every effort has been made to make AAS as easy to use as possible, there are a few things to look out for:</p>
+
+<ul>
+<li><b>Be careful when using DMA3.</b> AAS's mixer uses DMA3 for extra speed, which means that if you're using it in your code you must take precautions to prevent clashes. All DMA3's parameters must be written out with a single stmia instruction. The <a href="api_general.html#AAS_DoDMA3">AAS_DoDMA3</a> function has been provided to do this for you.</li>
+<li><b>Do not use DMA1, DMA2, Timer 0 or Timer 1.</b> They are reserved for use by AAS.</li>
+<li><b>Always call <a href="api_general.html#AAS_SetConfig">AAS_SetConfig</a> before calling any other sound functions.</b> <a href="api_general.html#AAS_SetConfig">AAS_SetConfig</a> must be called before any other AAS function, with the exception of <a href="api_general.html#AAS_DoDMA3">AAS_DoDMA3</a> and <a href="api_general.html#AAS_ShowLogo">AAS_ShowLogo</a>.</li>
+<li><b>Make sure that <a href="conv2aas.html">Conv2AAS</a>'s output is assembled and linked with your project.</b> <a href="conv2aas.html">Conv2AAS</a> is a tool for including data files in your project so that they can be used by AAS. It produces a header file (which should be included in your project) and an assembler file (which must be assembled and linked with your project). It is important to call <a href="conv2aas.html">Conv2AAS</a> in your makefile before any other files are compiled so that the header file it produces is up-to-date.</li>
+</ul>
+
+</blockquote>
+
+</body>
+</html>

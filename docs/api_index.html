@@ -1,0 +1,274 @@
+<html>
+<style type="text/css">
+<!--
+TD {font-size: 10pt; font-family: Verdana,Arial,Helvetica,sans-serif}
+BODY {font-size: 10pt; font-family: Verdana,Arial,Helvetica,sans-serif}
+A { text-decoration: none }
+a:hover { text-decoration: underline}
+pre {font-family: monospace}
+-->
+</style>
+
+<title>AAS Instructions</title>
+<body bgcolor="#FFFFFF" vlink="#990000" link="#990000" alink="#990000" text="#000000">
+
+<table border=0 width=100% cellpadding=0 cellspacing=0>
+<tr>
+<td nowrap valign=middle align=left>
+<table border=0 cellpadding=0 cellspacing=0>
+<tr>
+<td nowrap valign=middle align=left>
+<a href="http://www.apex-designs.net/tools_aas.html"><img src="images/aas_logo.gif" alt="[Image]" width=57 height=58 border=0></a>&nbsp;
+</td>
+<td nowrap valign=middle align=left>
+<b>APEX AUDIO SYSTEM</b><br>
+<i>Instruction Manual</i>
+</td>
+</tr>
+</table>
+</td>
+<td width=100% valign=middle align=center>
+<hr width=90%>
+</td>
+<td nowrap valign=middle align=right>
+<a href="index.html">intro</a> | <a href="getting_started.html">getting started</a> | <a href="conv2aas.html">conv2aas</a> | <a href="example.html">example</a> | <a href="faq.html">faq</a><br>
+<b>api :</b> <font color="#333377">index</font> | <a href="api_general.html">general</a> | <a href="api_sfx.html">sfx</a> | <a href="api_mod.html">mod</a> | <a href="api_misc.html">misc</a> | <a href="api_mixer.html">mixer</a>
+</td>
+</tr>
+</table>
+
+<br>
+
+<br><font size=+1 color="#333377">:: General Functions</font>
+<blockquote>
+
+<table border=0 cellpadding=2 cellspacing=2>
+<tr>
+<td align=right><a href="api_general.html#AAS_SetConfig">AAS_SetConfig</a></td>
+<td>:</td>
+<td>Sets the effective mixing rate, number of channels, volume boost, mono/stereo output and switches dynamic mixing on or off. Must be called before using any other AAS functions.</td>
+</tr>
+<tr>
+<td align=right><a href="api_general.html#AAS_Timer1InterruptHandler">AAS_Timer1InterruptHandler</a></td>
+<td>:</td>
+<td>Either this or <a href="api_general.html#AAS_FastTimer1InterruptHandler">AAS_FastTimer1InterruptHandler</a> must be quickly called when a Timer 1 interrupt occurs.</td>
+</tr>
+<tr>
+<td align=right><a href="api_general.html#AAS_FastTimer1InterruptHandler">AAS_FastTimer1InterruptHandler</a></td>
+<td>:</td>
+<td>Either this or <a href="api_general.html#AAS_Timer1InterruptHandler">AAS_Timer1InterruptHandler</a> must be quickly called when a Timer 1 interrupt occurs. <a href="api_general.html#AAS_DoWork">AAS_DoWork</a> must also be called 50 times per second if <a href="api_general.html#AAS_FastTimer1InterruptHandler">AAS_FastTimer1InterruptHandler</a> is used.</td>
+</tr>
+<tr>
+<td align=right><a href="api_general.html#AAS_DoWork">AAS_DoWork</a></td>
+<td>:</td>
+<td>Mixes the next batch of audio. Should only be used in conjunction with <a href="api_general.html#AAS_FastTimer1InterruptHandler">AAS_FastTimer1InterruptHandler</a>.</td>
+</tr>
+<tr>
+<td align=right><a href="api_general.html#AAS_DoDMA3">AAS_DoDMA3</a></td>
+<td>:</td>
+<td>Allows DMA3 to be used safely.</td>
+</tr>
+<tr>
+<td align=right><a href="api_general.html#AAS_ShowLogo">AAS_ShowLogo</a></td>
+<td>:</td>
+<td>Displays the AAS splash screen.</td>
+</tr>
+</table>
+
+</blockquote>
+<br><font size=+1 color="#333377">:: SFX Functions</font>
+<blockquote>
+
+<table border=0 cellpadding=2 cellspacing=2>
+<tr>
+<td align=right><a href="api_sfx.html#AAS_SFX_Play">AAS_SFX_Play</a></td>
+<td>:</td>
+<td>Starts playing the specified sample.</td>
+</tr>
+<tr>
+<td align=right><a href="api_sfx.html#AAS_SFX_ChannelExists">AAS_SFX_ChannelExists</a></td>
+<td>:</td>
+<td>Returns AAS_TRUE only if <a href="api_sfx.html#AAS_SFX_Play">AAS_SFX_Play</a> will succeed for this channel, otherwise returns AAS_FALSE.</td>
+</tr>
+<tr>
+<td align=right><a href="api_sfx.html#AAS_SFX_IsActive">AAS_SFX_IsActive</a></td>
+<td>:</td>
+<td>Returns AAS_TRUE if channel is valid and active, AAS_FALSE otherwise.</td>
+</tr>
+<tr>
+<td align=right><a href="api_sfx.html#AAS_SFX_EndLoop">AAS_SFX_EndLoop</a></td>
+<td>:</td>
+<td>If a looping sample was playing in this channel, it will not loop again at end of the current iteration.</td>
+</tr>
+<tr>
+<td align=right><a href="api_sfx.html#AAS_SFX_SetFrequency">AAS_SFX_SetFrequency</a></td>
+<td>:</td>
+<td>Changes the frequency of the sample playing in the specified channel.</td>
+</tr>
+<tr>
+<td align=right><a href="api_sfx.html#AAS_SFX_SetVolume">AAS_SFX_SetVolume</a></td>
+<td>:</td>
+<td>Changes the volume of the sample playing in the specified channel.</td>
+</tr>
+<tr>
+<td align=right><a href="api_sfx.html#AAS_SFX_Stop">AAS_SFX_Stop</a></td>
+<td>:</td>
+<td>Stops the sample currently playing in the specified channel.</td>
+</tr>
+<tr>
+<td align=right><a href="api_sfx.html#AAS_SFX_Resume">AAS_SFX_Resume</a></td>
+<td>:</td>
+<td>Resumes a channel that has been previously stopped.</td>
+</tr>
+<tr>
+<td align=right><a href="api_sfx.html#AAS_SFX_GetNumChannels">AAS_SFX_GetNumChannels</a></td>
+<td>:</td>
+<td>Returns the number of SFX channels that are currently available.</td>
+</tr>
+</table>
+
+</blockquote>
+<br><font size=+1 color="#333377">:: MOD Functions</font>
+<blockquote>
+
+<table border=0 cellpadding=2 cellspacing=2>
+<tr>
+<td align=right><a href="api_mod.html#AAS_MOD_Play">AAS_MOD_Play</a></td>
+<td>:</td>
+<td>Starts playing the specified MOD file.</td>
+</tr>
+<tr>
+<td align=right><a href="api_mod.html#AAS_MOD_SetLoop">AAS_MOD_SetLoop</a></td>
+<td>:</td>
+<td>Specifies whether the current MOD will loop. All MODs loop by default.</td>
+</tr>
+<tr>
+<td align=right><a href="api_mod.html#AAS_MOD_Stop">AAS_MOD_Stop</a></td>
+<td>:</td>
+<td>Stops playing current MOD.</td>
+</tr>
+<tr>
+<td align=right><a href="api_mod.html#AAS_MOD_Pause">AAS_MOD_Pause</a></td>
+<td>:</td>
+<td>Pauses the current MOD. It can be continued later using <a href="api_mod.html#AAS_MOD_Resume">AAS_MOD_Resume</a>.</td>
+</tr>
+<tr>
+<td align=right><a href="api_mod.html#AAS_MOD_Resume">AAS_MOD_Resume</a></td>
+<td>:</td>
+<td>Resumes a MOD that was previously paused using <a href="api_mod.html#AAS_MOD_Pause">AAS_MOD_Pause</a>.</td>
+</tr>
+<tr>
+<td align=right><a href="api_mod.html#AAS_MOD_IsPlaying">AAS_MOD_IsPlaying</a></td>
+<td>:</td>
+<td>Checks whether a MOD is currently playing.</td>
+</tr>
+<tr>
+<td align=right><a href="api_mod.html#AAS_MOD_HasLooped">AAS_MOD_HasLooped</a></td>
+<td>:</td>
+<td>Checks whether or not the current MOD has looped.</td>
+</tr>
+<tr>
+<td align=right><a href="api_mod.html#AAS_MOD_GetVolume">AAS_MOD_GetVolume</a></td>
+<td>:</td>
+<td>Returns the current volume for MOD tunes. 0 = silent, 256 = max.</td>
+</tr>
+<tr>
+<td align=right><a href="api_mod.html#AAS_MOD_SetVolume">AAS_MOD_SetVolume</a></td>
+<td>:</td>
+<td>Sets the current volume for MOD tunes. 0 = silent, 256 = max.</td>
+</tr>
+<tr>
+<td align=right><a href="api_mod.html#AAS_MOD_GetSongPos">AAS_MOD_GetSongPos</a></td>
+<td>:</td>
+<td>Returns the current song position of the playing MOD.</td>
+</tr>
+<tr>
+<td align=right><a href="api_mod.html#AAS_MOD_SetSongPos">AAS_MOD_SetSongPos</a></td>
+<td>:</td>
+<td>Immediately jumps to the specified song position.</td>
+</tr>
+<tr>
+<td align=right><a href="api_mod.html#AAS_MOD_QueueSongPos">AAS_MOD_QueueSongPos</a></td>
+<td>:</td>
+<td>Jumps to the specified song position when the current pattern finishes.</td>
+</tr>
+<tr>
+<td align=right><a href="api_mod.html#AAS_MOD_GetLineNum">AAS_MOD_GetLineNum</a></td>
+<td>:</td>
+<td>Returns the current line number of the playing MOD.</td>
+</tr>
+<tr>
+<td align=right><a href="api_mod.html#AAS_MOD_GetLastFilterValue">AAS_MOD_GetLastFilterValue</a></td>
+<td>:</td>
+<td>Returns the value specified by the most recent "E0: Set Filter" effect. Can be used to sychronise code with the music.</td>
+</tr>
+<tr>
+<td align=right><a href="api_mod.html#AAS_MOD_GetNumChannels">AAS_MOD_GetNumChannels</a></td>
+<td>:</td>
+<td>Returns the number of channels that are currently being reserved by the MOD.</td>
+</tr>
+</table>
+
+</blockquote>
+<br><font size=+1 color="#333377">:: Misc Functions</font>
+<blockquote>
+
+<table border=0 cellpadding=2 cellspacing=2>
+<tr>
+<td align=right><a href="api_misc.html#AAS_GetOutputBufferAddress">AAS_GetOutputBufferAddress</a></td>
+<td>:</td>
+<td>Gets the address of the specified mixing buffer. Can be used to make oscilliscope displays of the current output.</td>
+</tr>
+<tr>
+<td align=right><a href="api_misc.html#AAS_GetOutputBufferLength">AAS_GetOutputBufferLength</a></td>
+<td>:</td>
+<td>Gets the current length of the mixing buffer in bytes.</td>
+</tr>
+<tr>
+<td align=right><a href="api_misc.html#AAS_GetActualMixRate">AAS_GetActualMixRate</a></td>
+<td>:</td>
+<td>Returns the current mixing rate in hertz.</td>
+</tr>
+</table>
+
+</blockquote>
+<br><font size=+1 color="#333377">:: Mixer Functions</font>
+<blockquote>
+
+<table border=0 cellpadding=2 cellspacing=2>
+<tr>
+<td align=right><a href="api_mixer.html#AAS_MixAudio">AAS_MixAudio</a></td>
+<td>:</td>
+<td>Mixes multiple sounds into a single mixing buffer. This function is in IWRAM and so it must be called using AAS_INIT_BRANCH and AAS_BRANCH() as described in "AAS_Mixer.h". <b>This function should not normally be directly called.</b></td>
+</tr>
+<tr>
+<td align=right><a href="api_mixer.html#AAS_MixAudio_NoChange">AAS_MixAudio_NoChange</a></td>
+<td>:</td>
+<td>Mixes multiple sounds into a single mixing buffer. This function should only be called if there are no changes to chans[] since a previous call to <a href="api_mixer.html#AAS_MixAudio">AAS_MixAudio</a>. Do not call twice in a row. This function is in IWRAM and so it must be called using AAS_INIT_BRANCH and AAS_BRANCH() as described in "AAS_Mixer.h". <b>This function should not normally be directly called - see <a href="api_mixer.html#AAS_MixAudio">AAS_MixAudio</a>.</b></td>
+</tr>
+<tr>
+<td align=right><a href="api_mixer.html#AAS_MixAudio_SetMode">AAS_MixAudio_SetMode</a></td>
+<td>:</td>
+<td>Enable/disable volume boost and (optional) clipping. This function should only be called if you can be 100% sure that <a href="api_mixer.html#AAS_MixAudio">AAS_MixAudio</a> and <a href="api_mixer.html#AAS_MixAudio_NoChange">AAS_MixAudio_NoChange</a> won't interrupt it. <b>This function should not normally be directly called - see <a href="api_mixer.html#AAS_MixAudio">AAS_MixAudio</a>.</b></td>
+</tr>
+<tr>
+<td align=right><a href="api_mixer.html#AAS_MixAudio_SetMaxChans_2">AAS_MixAudio_SetMaxChans_2</a></td>
+<td>:</td>
+<td>Sets the maximum number of channels in the set to 2. This function should only be called if you can be 100% sure that <a href="api_mixer.html#AAS_MixAudio">AAS_MixAudio</a> and <a href="api_mixer.html#AAS_MixAudio_NoChange">AAS_MixAudio_NoChange</a> won't interrupt it. <b>This function should not normally be directly called - see <a href="api_mixer.html#AAS_MixAudio">AAS_MixAudio</a>.</b></td>
+</tr>
+<tr>
+<td align=right><a href="api_mixer.html#AAS_MixAudio_SetMaxChans_4">AAS_MixAudio_SetMaxChans_4</a></td>
+<td>:</td>
+<td>Sets the maximum number of channels in the set to 4 (the default). This function should only be called if you can be 100% sure that <a href="api_mixer.html#AAS_MixAudio">AAS_MixAudio</a> and <a href="api_mixer.html#AAS_MixAudio_NoChange">AAS_MixAudio_NoChange</a> won't interrupt it. <b>This function should not normally be directly called - see <a href="api_mixer.html#AAS_MixAudio">AAS_MixAudio</a>.</b></td>
+</tr>
+<tr>
+<td align=right><a href="api_mixer.html#AAS_MixAudio_SetMaxChans_8">AAS_MixAudio_SetMaxChans_8</a></td>
+<td>:</td>
+<td>Sets the maximum number of channels in the set to 8. This function should only be called if you can be 100% sure that <a href="api_mixer.html#AAS_MixAudio">AAS_MixAudio</a> and <a href="api_mixer.html#AAS_MixAudio_NoChange">AAS_MixAudio_NoChange</a> won't interrupt it. <b>This function should not normally be directly called - see <a href="api_mixer.html#AAS_MixAudio">AAS_MixAudio</a>.</b></td>
+</tr>
+</table>
+
+</blockquote>
+
+</body>
+</html>

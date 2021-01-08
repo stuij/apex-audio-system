@@ -1,0 +1,323 @@
+<html>
+<style type="text/css">
+<!--
+TD {font-size: 10pt; font-family: Verdana,Arial,Helvetica,sans-serif}
+BODY {font-size: 10pt; font-family: Verdana,Arial,Helvetica,sans-serif}
+A { text-decoration: none }
+a:hover { text-decoration: underline}
+pre {font-family: monospace}
+-->
+</style>
+
+<title>AAS Instructions</title>
+<body bgcolor="#FFFFFF" vlink="#990000" link="#990000" alink="#990000" text="#000000">
+
+<table border=0 width=100% cellpadding=0 cellspacing=0>
+<tr>
+<td nowrap valign=middle align=left>
+<table border=0 cellpadding=0 cellspacing=0>
+<tr>
+<td nowrap valign=middle align=left>
+<a href="http://www.apex-designs.net/tools_aas.html"><img src="images/aas_logo.gif" alt="[Image]" width=57 height=58 border=0></a>&nbsp;
+</td>
+<td nowrap valign=middle align=left>
+<b>APEX AUDIO SYSTEM</b><br>
+<i>Instruction Manual</i>
+</td>
+</tr>
+</table>
+</td>
+<td width=100% valign=middle align=center>
+<hr width=90%>
+</td>
+<td nowrap valign=middle align=right>
+<a href="index.html">intro</a> | <a href="getting_started.html">getting started</a> | <a href="conv2aas.html">conv2aas</a> | <a href="example.html">example</a> | <a href="faq.html">faq</a><br>
+<b>api :</b> <a href="api_index.html">index</a> | <font color="#333377">general</font> | <a href="api_sfx.html">sfx</a> | <a href="api_mod.html">mod</a> | <a href="api_misc.html">misc</a> | <a href="api_mixer.html">mixer</a>
+</td>
+</tr>
+</table>
+
+<br>
+
+<br><font size=+1 color="#333377">:: <a name="AAS_SetConfig">AAS_SetConfig</a></font>
+<blockquote>
+<table border=0 cellpadding=2 cellspacing=10>
+<tr>
+<td valign=top><b>PROTOTYPE</b></td>
+<td>int AAS_SetConfig( int <i>config_mix</i>, int <i>config_chans</i>, int <i>config_spatial</i>, int <i>config_dynamic</i> );</td>
+</tr>
+<tr>
+<td valign=top><b>FUNCTION</b></td>
+<td>Sets the effective mixing rate, number of channels, volume boost, mono/stereo output and switches dynamic mixing on or off. Must be called before using any other AAS functions.</td>
+</tr>
+<tr>
+<td valign=top><b>PARAMETERS</b></td>
+<td><table border=0 cellpadding=2 cellspacing=2>
+<tr>
+<td><b>Name</b></td>
+<td><b>Valid values</b></td>
+<td><b>Meaning</b></td>
+</tr>
+<tr>
+<td valign=top><i>config_mix</i></td>
+<td valign=top>
+AAS_CONFIG_MIX_32KHZ<br>
+AAS_CONFIG_MIX_28KHZ<br>
+AAS_CONFIG_MIX_24KHZ<br>
+AAS_CONFIG_MIX_20KHZ<br>
+AAS_CONFIG_MIX_16KHZ<br>
+AAS_CONFIG_MIX_12KHZ<br>
+AAS_CONFIG_MIX_8KHZ
+</td>
+<td valign=top>Specifies the effective mixing rate</td>
+</tr>
+<tr>
+<td valign=top><i>config_chans</i></td>
+<td valign=top>
+AAS_CONFIG_CHANS_16<br>
+AAS_CONFIG_CHANS_8<br>
+AAS_CONFIG_CHANS_4<br>
+AAS_CONFIG_CHANS_16_LOUD<br>
+AAS_CONFIG_CHANS_8_LOUD<br>
+AAS_CONFIG_CHANS_4_LOUD
+</td>
+<td valign=top>Specifies the maximum number of channels and whether the output should be volume boosted and clipped</td>
+</tr>
+<tr>
+<td valign=top><i>config_spatial</i></td>
+<td valign=top>
+AAS_CONFIG_SPATIAL_STEREO<br>
+AAS_CONFIG_SPATIAL_MONO
+</td>
+<td valign=top>Specifies mono/stereo output</td>
+</tr>
+<tr>
+<td valign=top><i>config_dynamic</i></td>
+<td valign=top>
+AAS_CONFIG_DYNAMIC_OFF<br>
+AAS_CONFIG_DYNAMIC_ON</td>
+<td valign=top>Specifies dynamic mixing on/off (see <b>NOTES</b>)</td>
+</tr>
+</table></td>
+</tr>
+<tr>
+<td valign=top><b>RETURNS</b></td>
+<td><table border=0 cellpadding=2 cellspacing=2>
+<tr>
+<td><i>AAS_OK</i></td>
+<td>:</td>
+<td>Function executed correctly.</td>
+</tr>
+<tr>
+<td><i>AAS_ERROR_INVALID_CONFIG</i></td>
+<td>:</td>
+<td>Invalid configuration requested.</td>
+</tr>
+</table></td>
+</tr>
+<tr>
+<td valign=top><b>NOTES</b></td>
+<td>
+<p>This function should be called at least once before calling any other AAS functions. It can also be used to change the audio settings, although doing so will stop any sounds that are currently playing. The recommended configuration is 24KHz AAS_CONFIG_CHANS_8 mono with dynamic mixing disabled.</p>
+<p>The AAS_CONFIG_CHANS_x_LOUD modes increase the volume of the output but take ~10% more CPU time and can cause the sound to distort in some cases. They are not recommended for use with the 4 channel modes but are strongly encouraged when using 16 channels.</p>
+<p>Dynamic mixing automatically adjusts the mixing rate depending on the frequency of the sounds being played, up to a maximum of the mixing rate you specified. Disabling it will cause AAS to always use the mixing rate you chose. Dynamic mixing is still somewhat experimental, but it often yields a significant performance boost for only a very small drop in quality.</p>
+<p>If stereo mode is used the SFX channels are arranged as follows:</p>
+<ul>
+<li>SFX Channel 0 : Left</li>
+<li>SFX Channel 1 : Right</li>
+<li>SFX Channel 2 : Right</li>
+<li>SFX Channel 3 : Left</li>
+<li>SFX Channel 4 : Left</li>
+<li>SFX Channel 5 : Right</li>
+<li>SFX Channel 6 : Right</li>
+<li>SFX Channel 7 : Left</li>
+<li>SFX Channel 8 : Left</li>
+<li>SFX Channel 9 : Right</li>
+<li>SFX Channel 10 : Right</li>
+<li>SFX Channel 11 : Left</li>
+<li>SFX Channel 12 : Left</li>
+<li>SFX Channel 13 : Right</li>
+<li>SFX Channel 14 : Right</li>
+<li>SFX Channel 15 : Left</li>
+</ul>
+<p>In mono mode, all sounds come out both speakers.</p>
+<p>The number of channels you can access is limited by the number that are already being used to play a MOD. So, if you're playing a 3 channel MOD in AAS_CONFIG_CHANS_4 mode then only the first channel (channel 0) will be available for playing sound effects. If AAS_CONFIG_CHANS_8 were used in the same situation then the first 5 channels (channels 0-4) would be available.</p>
+</td>
+</tr>
+</table>
+</blockquote>
+
+<br><font size=+1 color="#333377">:: <a name="AAS_Timer1InterruptHandler">AAS_Timer1InterruptHandler</a></font>
+<blockquote>
+<table border=0 cellpadding=2 cellspacing=10>
+<tr>
+<td valign=top><b>PROTOTYPE</b></td>
+<td>void AAS_Timer1InterruptHandler();</td>
+</tr>
+<tr>
+<td valign=top><b>FUNCTION</b></td>
+<td>Either this or <a href="api_general.html#AAS_FastTimer1InterruptHandler">AAS_FastTimer1InterruptHandler</a> must be quickly called when a Timer 1 interrupt occurs.</td>
+</tr>
+<tr>
+<td valign=top><b>PARAMETERS</b></td>
+<td><i>None</i></td>
+</tr>
+<tr>
+<td valign=top><b>RETURNS</b></td>
+<td><i>Nothing</i></td>
+</tr>
+<tr>
+<td valign=top><b>NOTES</b></td>
+<td>
+<p>The Timer 1 interrupt occurs roughly 50 times per second and this routine must be called by the user's interrupt handler each time the appropriate interrupt occurs. For more information about this please read the <a href="getting_started.html">getting started</a> section and, for example interrupt handling code, please read the <a href="example.html">example</a> section.</p>
+<p>This routine also mixes the next batch of audio so it can take a long time to return. This may cause problems if you have other CPU-intensive interrupts in your code. In these cases, <a href="api_general.html#AAS_FastTimer1InterruptHandler">AAS_FastTimer1InterruptHandler</a>, <a href="api_general.html#AAS_DoWork">AAS_DoWork</a> and the special "__AAS_MultipleInterrupts" mode in the crt0.s file used in AASExample2 should be used instead of the normal interrupt handling modes.</p>
+</td>
+</tr>
+</table>
+</blockquote>
+
+<br><font size=+1 color="#333377">:: <a name="AAS_FastTimer1InterruptHandler">AAS_FastTimer1InterruptHandler</a></font>
+<blockquote>
+<table border=0 cellpadding=2 cellspacing=10>
+<tr>
+<td valign=top><b>PROTOTYPE</b></td>
+<td>void AAS_FastTimer1InterruptHandler();</td>
+</tr>
+<tr>
+<td valign=top><b>FUNCTION</b></td>
+<td>Either this or <a href="api_general.html#AAS_Timer1InterruptHandler">AAS_Timer1InterruptHandler</a> must be quickly called when a Timer 1 interrupt occurs. <a href="api_general.html#AAS_DoWork">AAS_DoWork</a> must also be called 50 times per second if <a href="api_general.html#AAS_FastTimer1InterruptHandler">AAS_FastTimer1InterruptHandler</a> is used.</td>
+</tr>
+<tr>
+<td valign=top><b>PARAMETERS</b></td>
+<td><i>None</i></td>
+</tr>
+<tr>
+<td valign=top><b>RETURNS</b></td>
+<td><i>Nothing</i></td>
+</tr>
+<tr>
+<td valign=top><b>NOTES</b></td>
+<td>
+<p>This function also requires a seperate (less time-sensitive) call to <a href="api_general.html#AAS_DoWork">AAS_DoWork</a> at least 50 times a second. This function is called automatically if the special "AAS_MultipleInterrupts" mode in the custom crt0.s file included with the SDK is used.</p>
+<p>The Timer 1 interrupt occurs roughly 50 times per second and this routine must be called by the user's interrupt handler each time the appropriate interrupt occurs. For more information about this please read the <a href="getting_started.html">getting started</a> section and, for example interrupt handling code, please read the <a href="example.html">example</a> section.</p>
+<p>This routine starts the next piece of audio playing, but does not mix the batch of audio that will be played after that. This means that this routine returns very quickly but a seperate call to <a href="api_general.html#AAS_DoWork">AAS_DoWork</a> is also required within the next 50th of a second. The ideal place to call <a href="api_general.html#AAS_DoWork">AAS_DoWork</a> is during VBlank. To prevent AAS_FastTimer1InterruptHandler() being halted by another interrupt, the special "__AAS_MultipleInterrupts" mode in the crt0.s file used in AASExample2 should also be used.</p>
+<p>Alternatively, if your code does not use other CPU-intensive interrupts then you can use a normal interrupt handler and <a href="api_general.html#AAS_Timer1InterruptHandler">AAS_Timer1InterruptHandler</a>. In this case there is no need for a seperate call to <a href="api_general.html#AAS_DoWork">AAS_DoWork</a>. An example of this method of handling interrupts is shown in AASExample.</p>
+</td>
+</tr>
+</table>
+</blockquote>
+
+<br><font size=+1 color="#333377">:: <a name="AAS_DoWork">AAS_DoWork</a></font>
+<blockquote>
+<table border=0 cellpadding=2 cellspacing=10>
+<tr>
+<td valign=top><b>PROTOTYPE</b></td>
+<td>void AAS_DoWork();</td>
+</tr>
+<tr>
+<td valign=top><b>FUNCTION</b></td>
+<td>Mixes the next batch of audio. Should only be used in conjunction with <a href="api_general.html#AAS_FastTimer1InterruptHandler">AAS_FastTimer1InterruptHandler</a>.</td>
+</tr>
+<tr>
+<td valign=top><b>PARAMETERS</b></td>
+<td><i>None</i></td>
+</tr>
+<tr>
+<td valign=top><b>RETURNS</b></td>
+<td><i>Nothing</i></td>
+</tr>
+<tr>
+<td valign=top><b>NOTES</b></td>
+<td>
+<p>This function should be called at least 50 times a second (during VBlank, for example) if you're using <a href="api_general.html#AAS_FastTimer1InterruptHandler">AAS_FastTimer1InterruptHandler</a>. If you're using <a href="api_general.html#AAS_Timer1InterruptHandler">AAS_Timer1InterruptHandler</a> instead then <a href="api_general.html#AAS_DoWork">AAS_DoWork</a> should not be called at all.</p>
+<p>Should only be used in conjunction with <a href="api_general.html#AAS_FastTimer1InterruptHandler">AAS_FastTimer1InterruptHandler</a> and the special "__AAS_MultipleInterrupts" mode in the crt0.s file used in AASExample2. Alternatively, <a href="api_general.html#AAS_Timer1InterruptHandler">AAS_Timer1InterruptHandler</a> can be used with the standard interrupt handlers but this will not work correctly if there are other CPU-intensive interrupts in your code.</p>
+</td>
+</tr>
+</table>
+</blockquote>
+
+<br><font size=+1 color="#333377">:: <a name="AAS_DoDMA3">AAS_DoDMA3</a></font>
+<blockquote>
+<table border=0 cellpadding=2 cellspacing=10>
+<tr>
+<td valign=top><b>PROTOTYPE</b></td>
+<td>void AAS_DoDMA3( void* <i>source</i>, void* <i>dest</i>, AAS_u32 <i>flags_and_length</i> );</td>
+</tr>
+<tr>
+<td valign=top><b>FUNCTION</b></td>
+<td>Allows DMA3 to be used safely.</td>
+</tr>
+<tr>
+<td valign=top><b>PARAMETERS</b></td>
+<td><table border=0 cellpadding=2 cellspacing=2>
+<tr>
+<td><b>Name</b></td>
+<td><b>Valid values</b></td>
+<td><b>Meaning</b></td>
+</tr>
+<tr>
+<td valign=top><i>source</i></td>
+<td valign=top>
+Depends on <i>flags_and_length</i>
+</td>
+<td valign=top>Specifies source address</td>
+</tr>
+<tr>
+<td valign=top><i>dest</i></td>
+<td valign=top>
+Depends on <i>flags_and_length</i>
+</td>
+<td valign=top>Specifies dest address</td>
+</tr>
+<tr>
+<td valign=top><i>flags_and_length</i></td>
+<td valign=top>
+See GBA docs
+</td>
+<td valign=top>See GBA docs</td>
+</tr>
+</table></td>
+</tr>
+<tr>
+<td valign=top><b>RETURNS</b></td>
+<td><i>Nothing</i></td>
+</tr>
+<tr>
+<td valign=top><b>NOTES</b></td>
+<td>
+<p>The mixer uses DMA3 internally, which means it is no longer safe to use DMA3 in your code in the usual way since the mixer might interrupt it halfway through and corrupt the parameters. To fix this you should either use AAS_DoDMA3 or the stmia assembler instruction to write all parameters with a single instruction.</p>
+</td>
+</tr>
+</table>
+</blockquote>
+
+<br><font size=+1 color="#333377">:: <a name="AAS_ShowLogo">AAS_ShowLogo</a></font>
+<blockquote>
+<table border=0 cellpadding=2 cellspacing=10>
+<tr>
+<td valign=top><b>PROTOTYPE</b></td>
+<td>void AAS_ShowLogo();</td>
+</tr>
+<tr>
+<td valign=top><b>FUNCTION</b></td>
+<td>Displays the AAS splash screen.</td>
+</tr>
+<tr>
+<td valign=top><b>PARAMETERS</b></td>
+<td><i>None</i></td>
+</tr>
+<tr>
+<td valign=top><b>RETURNS</b></td>
+<td><i>Nothing</i></td>
+</tr>
+<tr>
+<td valign=top><b>NOTES</b></td>
+<td>
+<p>Non commercial projects <i>must</i> display this splash screen on startup. It is optional on commercial projects. Please read about licensing <a href="index.html">here</a>.</p>
+</td>
+</tr>
+</table>
+</blockquote>
+
+</body>
+</html>

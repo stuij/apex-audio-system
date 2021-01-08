@@ -1,0 +1,462 @@
+/*****************************************************************************\
+                         DevKit Advance Linker Script
+\*****************************************************************************/
+
+/* Administrivia:
+ *
+ * Copyright 2003, Jason Wilkins.  This source code is free for any use except
+ * that this copyright notice and the following disclaimers remain intact when
+ * the source is distributed.  There are absolutely no restrictions on use of
+ * object code generated from this source, but the disclaimers remain in force.
+ *
+ * THIS CODE WAS NOT MADE IN ASSOCIATION WITH NINTENDO AND DOES NOT MAKE USE OF
+ * ANY INTELLECTUAL PROPERTY CLAIMED BY NINTENDO.
+ *
+ * GAMEBOY ADVANCE IS A TRADEMARK OF NINTENDO.
+ *
+ * THIS CODE HAS BEEN PROVIDED "AS-IS" WITHOUT A WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO IMPLIED WARRANTIES OF
+ * MERCHANTABILITY OR FITNESS FOR A PARTICULAR USE.  THE ENTIRE RISK AS TO THE
+ * QUALITY OR PERFORMANCE OF THE CODE IS WITH YOU.
+ *
+ * IN NO EVENT, UNLESS AGREED TO IN WRITING, WILL ANY COPYRIGHT HOLDER, OR ANY
+ * OTHER PARTY, BE HELD LIABLE FOR ANY DAMAGES RESULTING FROM THE USE OR
+ * INABILITY TO USE THIS CODE.
+ *
+ * See $(DEVKITADV)/docs/Credits.txt for a list of contributors.
+ *****************************************************************************/
+
+OUTPUT_FORMAT("elf32-littlearm", "elf32-bigarm", "elf32-littlearm")
+OUTPUT_ARCH(arm)
+
+ENTRY(_start)
+
+SEARCH_DIR("/devkitadv-r5-beta-3/arm-agb-elf/lib");
+
+
+
+__memmap_ewram_start = 0x02000000;
+__memmap_ewram_end   = 0x02040000;
+
+__memmap_iwram_start = 0x03000000;
+__memmap_iwram_end   = 0x03008000;
+
+__memmap_rom_start   = 0x08000000;
+
+
+/* Added */
+__text_start      = DEFINED (__gba_multiboot) ? __memmap_ewram_start : __memmap_rom_start;
+/* __ewram_start     = __memmap_ewram_start; */
+/* __eheap_end       = __memmap_ewram_end; */
+__iwram_start     = __memmap_iwram_start;
+__iheap_end       = __memmap_iwram_end - 0x400;
+__sp_usr          = __memmap_iwram_end - 0x100;
+__sp_irq          = __memmap_iwram_end - 0x60;
+__intr_vector_buf = __memmap_iwram_end - 4;
+__sp_usr_offset   = __sp_usr - __iwram_start;
+__intr_vect_offset = __intr_vector_buf - __sp_usr;
+
+
+SECTIONS
+{
+/*** read-only sections ***/
+
+  . = DEFINED(__gba_multiboot) ? __memmap_ewram_start : __memmap_rom_start ;
+
+  .text :
+  {
+    /* crt0.o has to be the first thing in the ROM */
+    *crt0.o(.text)
+
+    *(EXCLUDE_FILE(*.rodata.* *.cartrom.o *.ewram.o *.iwram.o) .text)
+    *(.stub .text.* .gnu.linkonce.t*)
+
+    /* .gnu.warning sections are handled specially by elf32.em. */
+    *(.gnu.warning)
+
+    *(.glue_7)
+    *(.glue_7t)
+
+    . = ALIGN(4);
+  } =0xFF
+
+  .init :
+  {
+    *(.init)
+    . = ALIGN(4);
+  } =0xFF
+
+  .fini :
+  {
+    *(.fini)
+    . = ALIGN(4);
+  } =0xFF
+
+  __cartrom_start = . ;
+  .cartrom :
+  {
+    *(.cartrom .cartrom.*)
+    *.rodata.* (.text .rodata .data) /* deprecated: R4 */
+    *.cartrom.o (.text .rodata .data)
+
+    . = ALIGN(4);
+  } =0xFF
+  __cartrom_end = . ;
+
+  __rodata_start = . ;
+  .rodata :
+  {
+    *(.rodata1)
+    *(EXCLUDE_FILE(*.rodata.* *.cartrom.o *.ewram.o *.iwram.o) .rodata)
+    *(.rodata.* .gnu.linkonce.r*)
+    *(.roda) /* deprecated: for compatibility with objcopyroda */
+
+    SORT(CONSTRUCTORS)
+
+    . = ALIGN(4);
+  } =0xFF
+  __rodata_end = . ;
+
+  .eh_frame :
+  {
+    KEEP(*(.eh_frame))
+    . = ALIGN(4);
+  } =0xFF
+
+  .gcc_except_table :
+  {
+    *(.gcc_except_table)
+    . = ALIGN(4);
+  } =0xFF
+
+  .ctors :
+  {
+    /* gcc uses crtbegin.o to find the start of
+       the constructors, so we make sure it is
+       first.  Because this is a wildcard, it
+       doesn't matter if the user does not
+       actually link against crtbegin.o; the
+       linker won't look for a file to match a
+       wildcard.  The wildcard also means that it
+       doesn't matter which directory crtbegin.o
+       is in.  */
+    KEEP(*crtbegin.o(.ctors))
+    /* We don't want to include the .ctor section from
+       from the crtend.o file until after the sorted ctors.
+       The .ctor section from the crtend file contains the
+       end of ctors marker and it must be last */
+     KEEP(*(EXCLUDE_FILE (*crtend.o) .ctors))
+     KEEP(*(SORT(.ctors.*)))
+     KEEP(*(.ctors))
+
+    . = ALIGN(4);
+  } =0xFF
+
+  .dtors :
+  {
+    KEEP(*crtbegin.o(.dtors))
+    KEEP(*(EXCLUDE_FILE (*crtend.o ) .dtors))
+    KEEP(*(SORT(.dtors.*)))
+    KEEP(*(.dtors))
+
+    . = ALIGN(4);
+  } =0xFF
+
+  .jcr :
+  {
+    *(.jcr)
+    . = ALIGN(4);
+  } =0xFF
+
+
+
+/*** EWRAM ***/
+
+  __load_start_ewram =
+	ADDR(.text) +
+	SIZEOF(.text) +
+	SIZEOF(.init) +
+	SIZEOF(.fini) +
+	SIZEOF(.cartrom) +
+	SIZEOF(.rodata) +
+	SIZEOF(.eh_frame) +
+	SIZEOF(.gcc_except_table) +
+	SIZEOF(.ctors) +
+	SIZEOF(.dtors) +
+	SIZEOF(.jcr);
+
+  . = DEFINED(__gba_multiboot) ? __load_start_ewram : __memmap_ewram_start ;
+
+  __ewram_start = . ;
+  .ewram : AT(__load_start_ewram)
+  {
+    *(.ewram .ewram.*)
+    *.ewram.o (.text .rodata .data)
+    . = ALIGN(4);
+  } =0xFF
+  __ewram_end = . ;
+
+  __ewram_overlay_start = . ;
+  OVERLAY : NOCROSSREFS AT (__load_start_ewram + SIZEOF(.ewram))
+  {
+    .ewram0 { *(.ewram0 .ewram0.*) . = ALIGN(4); } =0xFF
+    .ewram1 { *(.ewram1 .ewram1.*) . = ALIGN(4); } =0xFF
+    .ewram2 { *(.ewram2 .ewram2.*) . = ALIGN(4); } =0xFF
+    .ewram3 { *(.ewram3 .ewram3.*) . = ALIGN(4); } =0xFF
+    .ewram4 { *(.ewram4 .ewram4.*) . = ALIGN(4); } =0xFF
+    .ewram5 { *(.ewram5 .ewram5.*) . = ALIGN(4); } =0xFF
+    .ewram6 { *(.ewram6 .ewram6.*) . = ALIGN(4); } =0xFF
+    .ewram7 { *(.ewram7 .ewram7.*) . = ALIGN(4); } =0xFF
+    .ewram8 { *(.ewram8 .ewram8.*) . = ALIGN(4); } =0xFF
+    .ewram9 { *(.ewram9 .ewram9.*) . = ALIGN(4); } =0xFF
+  }
+
+  /* OVERLAY should do this, but it doesn't seem to work. */
+  . = __ewram_start + SIZEOF(.ewram) +
+	MAX(SIZEOF(.ewram0),
+	MAX(SIZEOF(.ewram1),
+	MAX(SIZEOF(.ewram2),
+	MAX(SIZEOF(.ewram3),
+	MAX(SIZEOF(.ewram4),
+	MAX(SIZEOF(.ewram5),
+	MAX(SIZEOF(.ewram6),
+	MAX(SIZEOF(.ewram7),
+	MAX(SIZEOF(.ewram8), SIZEOF(.ewram9))))))))));
+
+  __ewram_overlay_end = . ;
+
+  __load_stop_ewram =
+	__load_start_ewram +
+	SIZEOF(.ewram) +
+	SIZEOF(.ewram0) +
+	SIZEOF(.ewram1) +
+	SIZEOF(.ewram2) +
+	SIZEOF(.ewram3) +
+	SIZEOF(.ewram4) +
+	SIZEOF(.ewram5) +
+	SIZEOF(.ewram6) +
+	SIZEOF(.ewram7) +
+	SIZEOF(.ewram8) +
+	SIZEOF(.ewram9);
+
+
+
+/* data */
+
+  . = DEFINED(__gba_ewram_data) ? __ewram_overlay_end : __memmap_iwram_start ;
+
+  __load_start_data = __load_stop_ewram;
+
+  __data_start = . ;
+  .data : AT(__load_start_data)
+  {
+    *(.sdata2 .sdata2.* .gnu.linkonce.s2.*)
+    *(EXCLUDE_FILE(*.rodata.* *.cartrom.o *.ewram.o *.iwram.o) .data)
+    *(.data.* .gnu.linkonce.d.*)
+    *(.data1)
+    *(.tdata .tdata.* .gnu.linkonce.td.*)
+    *(.sdata .sdata.* .gnu.linkonce.s.*)
+
+    . = ALIGN(4);
+  } =0xFF
+  __data_end = . ;
+
+  __load_stop_data = __load_start_data + SIZEOF(.data);
+
+
+
+/*** IWRAM ***/
+
+  . = DEFINED(__gba_ewram_data) ? __memmap_iwram_start : __data_end ;
+
+  __load_start_iwram = __load_stop_data;
+
+  __iwram_start = . ;
+  .iwram : AT(__load_start_iwram)
+  {
+    *(.iwram .iwram.*)
+    *.iwram.o (.text .rodata .data)
+    . = ALIGN(4);
+  } =0xFF
+  __iwram_end = . ;
+
+  __iwram_overlay_start = . ;
+  OVERLAY : NOCROSSREFS AT (__load_start_iwram + SIZEOF(.iwram))
+  {
+    .iwram0 { *(.iwram0 .iwram0.*) . = ALIGN(4); } =0xFF
+    .iwram1 { *(.iwram1 .iwram1.*) . = ALIGN(4); } =0xFF
+    .iwram2 { *(.iwram2 .iwram2.*) . = ALIGN(4); } =0xFF
+    .iwram3 { *(.iwram3 .iwram3.*) . = ALIGN(4); } =0xFF
+    .iwram4 { *(.iwram4 .iwram4.*) . = ALIGN(4); } =0xFF
+    .iwram5 { *(.iwram5 .iwram5.*) . = ALIGN(4); } =0xFF
+    .iwram6 { *(.iwram6 .iwram6.*) . = ALIGN(4); } =0xFF
+    .iwram7 { *(.iwram7 .iwram7.*) . = ALIGN(4); } =0xFF
+    .iwram8 { *(.iwram8 .iwram8.*) . = ALIGN(4); } =0xFF
+    .iwram9 { *(.iwram9 .iwram9.*) . = ALIGN(4); } =0xFF
+  }
+
+  /* OVERLAY should do this, but it doesn't seem to work. */
+  . = __iwram_start + SIZEOF(.iwram) +
+	MAX(SIZEOF(.iwram0),
+	MAX(SIZEOF(.iwram1),
+	MAX(SIZEOF(.iwram2),
+	MAX(SIZEOF(.iwram3),
+	MAX(SIZEOF(.iwram4),
+	MAX(SIZEOF(.iwram5),
+	MAX(SIZEOF(.iwram6),
+	MAX(SIZEOF(.iwram7),
+	MAX(SIZEOF(.iwram8), SIZEOF(.iwram9))))))))));
+
+  __iwram_overlay_end = . ;
+
+  __load_stop_iwram =
+	__load_start_iwram +
+	SIZEOF(.iwram) +
+	SIZEOF(.iwram0) +
+	SIZEOF(.iwram1) +
+	SIZEOF(.iwram2) +
+	SIZEOF(.iwram3) +
+	SIZEOF(.iwram4) +
+	SIZEOF(.iwram5) +
+	SIZEOF(.iwram6) +
+	SIZEOF(.iwram7) +
+	SIZEOF(.iwram8) +
+	SIZEOF(.iwram9);
+
+
+
+/*** footer ***/
+
+  . = __load_stop_iwram;
+
+  __load_start_footer = . ;
+  .footer :
+  {
+     *crt0.o(.footer)
+     *(.footer)
+     . = ALIGN(4);
+  }
+  __load_stop_footer = . ;
+
+
+
+/*** bss ***/
+
+  . = DEFINED(__gba_ewram_data) ? (DEFINED(__gba_multiboot) ? __load_stop_footer : __data_end) : __iwram_overlay_end ;
+  . = ALIGN(32);
+
+  PROVIDE(__bss_start__ = . );
+  __bss_start = . ;
+  .bss :
+  {
+    *(.sbss2 .sbss2.* .gnu.linkonce.sb2.*)
+
+    *(.tbss .tbss.* .gnu.linkonce.tb.*)
+    *(.tcommon)
+
+    *(.sbss .sbss.* .gnu.linkonce.sb.*)
+    *(.scommon)
+
+    *(.bss .bss.* .gnu.linkonce.b*)
+    *(COMMON)
+
+    . = ALIGN(4);
+  }
+  __bss_end = . ;
+  PROVIDE(_bss_end__ = . );
+  PROVIDE(__bss_end__ = . );
+
+
+
+/*** appended assets ***/
+
+  . = DEFINED(__gba_ewram_data) ? (DEFINED(__gba_multiboot) ? __bss_end : __load_stop_footer ) : __load_stop_footer ;
+
+  __load_start_appended = __load_stop_footer ;
+
+  __appended_start = . ;
+  .appended : AT(__load_start_appended)
+  {
+     *(.appended .appended.*)
+     . = ALIGN(4);
+  }
+  __appended_end = . ;
+
+  __load_stop_appended = __load_start_appended + SIZEOF(.appended);
+
+
+
+/*** heap ***/
+
+  __iwram_break = DEFINED(__gba_ewram_data) ? __iwram_overlay_end : __bss_end ;
+
+  __ewram_break = DEFINED(__gba_multiboot) ? __appended_end : (DEFINED(__gba_ewram_data) ? __bss_end : __ewram_overlay_end ) ;
+
+  _end = DEFINED(__gba_iwram_heap) ? __iwram_break : __ewram_break ;
+  PROVIDE(__end__ = _end);
+  PROVIDE(end = _end);
+
+  __heap_limit = DEFINED(__gba_iwram_heap) ? __memmap_iwram_end - 0x100 : __memmap_ewram_end ;
+
+
+/* Added */
+  __iwram_lma = __load_start_iwram;
+  __data_lma = __load_start_data;
+  __ewram_lma = __load_start_ewram;
+
+
+/* discard configuration variables */ 
+
+  /DISCARD/ :
+  {
+     *(.devkitadv.config)
+  }
+
+
+
+/*** debugging info ***/
+
+  /* Stabs debugging sections.  */
+  .stab 0 : { *(.stab) }
+  .stabstr 0 : { *(.stabstr) }
+  .stab.excl 0 : { *(.stab.excl) }
+  .stab.exclstr 0 : { *(.stab.exclstr) }
+  .stab.index 0 : { *(.stab.index) }
+  .stab.indexstr 0 : { *(.stab.indexstr) }
+
+  /* DWARF debug sections.
+   Symbols in the DWARF debugging sections are relative to the beginning
+   of the section so we begin them at 0.  */
+
+  /* DWARF 1 */
+  .debug          0 : { *(.debug) }
+  .line           0 : { *(.line) }
+
+  /* GNU DWARF 1 extensions */
+  .debug_srcinfo  0 : { *(.debug_srcinfo) }
+  .debug_sfnames  0 : { *(.debug_sfnames) }
+
+  /* DWARF 1.1 and DWARF 2 */
+  .debug_aranges  0 : { *(.debug_aranges) }
+  .debug_pubnames 0 : { *(.debug_pubnames) }
+
+  /* DWARF 2 */
+  .debug_info     0 : { *(.debug_info) }
+  .debug_abbrev   0 : { *(.debug_abbrev) }
+  .debug_line     0 : { *(.debug_line) }
+  .debug_frame    0 : { *(.debug_frame) }
+  .debug_str      0 : { *(.debug_str) }
+  .debug_loc      0 : { *(.debug_loc) }
+  .debug_macinfo  0 : { *(.debug_macinfo) }
+
+  .comment        0 : { *(.comment) }
+
+  /* SGI/MIPS DWARF 2 extensions */
+  .debug_weaknames 0 : { *(.debug_weaknames) }
+  .debug_funcnames 0 : { *(.debug_funcnames) }
+  .debug_typenames 0 : { *(.debug_typenames) }
+  .debug_varnames  0 : { *(.debug_varnames) }
+}
+
+
+

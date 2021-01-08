@@ -1,0 +1,139 @@
+<html>
+<style type="text/css">
+<!--
+TD {font-size: 10pt; font-family: Verdana,Arial,Helvetica,sans-serif}
+BODY {font-size: 10pt; font-family: Verdana,Arial,Helvetica,sans-serif}
+A { text-decoration: none }
+a:hover { text-decoration: underline}
+pre {font-family: monospace}
+-->
+</style>
+
+<title>AAS Instructions</title>
+<body bgcolor="#FFFFFF" vlink="#990000" link="#990000" alink="#990000" text="#000000">
+
+<table border=0 width=100% cellpadding=0 cellspacing=0>
+<tr>
+<td nowrap valign=middle align=left>
+<table border=0 cellpadding=0 cellspacing=0>
+<tr>
+<td nowrap valign=middle align=left>
+<a href="http://www.apex-designs.net/tools_aas.html"><img src="images/aas_logo.gif" alt="[Image]" width=57 height=58 border=0></a>&nbsp;
+</td>
+<td nowrap valign=middle align=left>
+<b>APEX AUDIO SYSTEM</b><br>
+<i>Instruction Manual</i>
+</td>
+</tr>
+</table>
+</td>
+<td width=100% valign=middle align=center>
+<hr width=90%>
+</td>
+<td nowrap valign=middle align=right>
+<a href="index.html">intro</a> | <a href="getting_started.html">getting started</a> | <font color="#333377">conv2aas</font> | <a href="example.html">example</a> | <a href="faq.html">faq</a><br>
+<b>api :</b> <a href="api_index.html">index</a> | <a href="api_general.html">general</a> | <a href="api_sfx.html">sfx</a> | <a href="api_mod.html">mod</a> | <a href="api_misc.html">misc</a> | <a href="api_mixer.html">mixer</a>
+</td>
+</tr>
+</table>
+
+<br>
+
+<br><font size=+1 color="#333377">:: What Is Conv2AAS?</font>
+<blockquote>
+
+<p>Conv2AAS is a simple tool that reads in all the files in a specified directory and converts them into a single data file (with an associated header file) which can then be used in your project. Any redundancy in the data will be removed. For example, if two MODs in your project use the same samples then those samples will only be included once to save space.</p>
+
+</blockquote>
+<br><font size=+1 color="#333377">:: What File Formats Are Supported?</font>
+<blockquote>
+
+<p>Currently, Conv2AAS supports the following file formats:</p>
+
+<table border=0 cellpadding=2 cellspacing=2>
+<tr>
+<td><b>Format</b></td>
+<td><b>Extension</b></td>
+<td><b>Restrictions</b></td>
+</tr>
+<tr>
+<td valign=top><i>MOD</i></td>
+<td valign=top>
+.mod
+</td>
+<td valign=top>Protracker/Noisetracker/FastTracker/Falcon/TakeTracker 1-16 channel MODs are supported. The following effects are implemented:<br>
+<blockquote>
+0: Arpeggio<br>
+1: Slide Up<br>
+2: Slide Down<br>
+3: Tone Portamento<br>
+4: Vibrato<br>
+5: Tone Portamento + Volume Slide<br>
+6: Vibrato + Volume Slide<br>
+7: Tremolo<br>
+9: Set Sample Offset<br>
+A: Volume Slide<br>
+B: Position Jump<br>
+C: Set Volume<br>
+D: Pattern Break<br>
+E0: Set Filter (*)<br>
+E1: Fine Slide Up<br>
+E2: Fine Slide Down<br>
+E6: Set/Jump to Loop<br>
+E9: Retrigger Note<br>
+EA: Fine Volume Slide Up<br>
+EB: Fine Volume Slide Down<br>
+EC: Note Cut<br>
+ED: Note Delay<br>
+EE: Pattern Delay<br>
+F: Set Speed<br>
+<br>
+(*) The GBA has no hardware filter so this effect does not change the audio output. However, the most recent value set by this effect can be read in your code via the <a href="api_mod.html#AAS_MOD_GetLastFilterValue">AAS_MOD_GetLastFilterValue</a> function. This can be used to sychronise your code with the music.<br>
+</blockquote>
+Conv2AAS will produce warnings if a MOD uses unsupported effects, is in the wrong format or if it has too many channels. However, even if a MOD does use unsupported effects, it will often still play almost perfectly.</td>
+</tr>
+<tr>
+<td valign=top><i>RAW</i></td>
+<td valign=top>
+.raw
+</td>
+<td valign=top>Data must be 8-bit signed mono PCM with no header.</td>
+</tr>
+<tr>
+<td valign=top><i>WAV</i></td>
+<td valign=top>
+.wav
+</td>
+<td valign=top>Must be in 8-bit unsigned mono PCM format. (Automatically converted to signed format by Conv2AAS.)</td>
+</tr>
+</table>
+
+</blockquote>
+<br><font size=+1 color="#333377">:: Creating Sound Files</font>
+<blockquote>
+
+<p>Probably the best MOD editor out there is <a href="http://www.modplug.com/">ModPlug</a>. It can convert from other formats and has the added advantage of being free. For converting samples into the appropriate RAW and WAV formats, I recommend <a href="http://sox.sourceforge.net/">SoX</a>, which is also free.</p>
+
+<p>To convert to the appropriate formats using sox, use the following command:</p>
+
+<pre>
+sox [source_filename] -s -b -c 1 [destination_filename]</pre>
+
+<p><i>[source_filename]</i> is the name of the sound you wish to convert (e.g. "source.wav"). <i>[destination_filename]</i> is the name of the file you wish to create (e.g. "dest.raw") - it should end with ".wav" or ".raw" to be compatible with Conv2AAS. Note that sox will give a warning when converting to .wav format that it has converted the data to unsigned - this is normal. Also make sure that <i>[source_filename]</i> and <i>[destination_filename]</i> are different. It is even possible to use sox to automatically convert all your sound files as part of your project's makefile.</p>
+
+</blockquote>
+<br><font size=+1 color="#333377">:: Calling Conv2AAS</font>
+<blockquote>
+
+<p>Conv2AAS includes versions compiled for DOS/Windows (Conv2AAS.exe) and Linux (Conv2AAS). It should be called from the command line and only needs one parameter, which is the name of the folder that contains the data files. All the files in that folder will be processed so it is recommended that you create a subfolder for your project that contains all the sound files. Conv2AAS always creates two files in the current directory:</p>
+
+<p><b>AAS_Data.h</b> : This is the header file that you should include in your main code whenever you want access the AAS sound data.</p>
+
+<p><b>AAS_Data.s</b> : This is the raw data itself, stored as an assembly file suitable for the GBA. It should be assembled to produce an object file that can then be linked with your project.</p>
+
+<p>The <a href="example.html">example code</a> included with AAS comes with a makefile that will automatically run Conv2AAS each time your program is compiled. It is highly recommended that you use a similar system in your project.</p>
+
+</blockquote>
+
+</body>
+</html>

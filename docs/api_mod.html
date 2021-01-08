@@ -1,0 +1,649 @@
+<html>
+<style type="text/css">
+<!--
+TD {font-size: 10pt; font-family: Verdana,Arial,Helvetica,sans-serif}
+BODY {font-size: 10pt; font-family: Verdana,Arial,Helvetica,sans-serif}
+A { text-decoration: none }
+a:hover { text-decoration: underline}
+pre {font-family: monospace}
+-->
+</style>
+
+<title>AAS Instructions</title>
+<body bgcolor="#FFFFFF" vlink="#990000" link="#990000" alink="#990000" text="#000000">
+
+<table border=0 width=100% cellpadding=0 cellspacing=0>
+<tr>
+<td nowrap valign=middle align=left>
+<table border=0 cellpadding=0 cellspacing=0>
+<tr>
+<td nowrap valign=middle align=left>
+<a href="http://www.apex-designs.net/tools_aas.html"><img src="images/aas_logo.gif" alt="[Image]" width=57 height=58 border=0></a>&nbsp;
+</td>
+<td nowrap valign=middle align=left>
+<b>APEX AUDIO SYSTEM</b><br>
+<i>Instruction Manual</i>
+</td>
+</tr>
+</table>
+</td>
+<td width=100% valign=middle align=center>
+<hr width=90%>
+</td>
+<td nowrap valign=middle align=right>
+<a href="index.html">intro</a> | <a href="getting_started.html">getting started</a> | <a href="conv2aas.html">conv2aas</a> | <a href="example.html">example</a> | <a href="faq.html">faq</a><br>
+<b>api :</b> <a href="api_index.html">index</a> | <a href="api_general.html">general</a> | <a href="api_sfx.html">sfx</a> | <font color="#333377">mod</font> | <a href="api_misc.html">misc</a> | <a href="api_mixer.html">mixer</a>
+</td>
+</tr>
+</table>
+
+<br>
+
+<br><font size=+1 color="#333377">:: <a name="AAS_MOD_Play">AAS_MOD_Play</a></font>
+<blockquote>
+<table border=0 cellpadding=2 cellspacing=10>
+<tr>
+<td valign=top><b>PROTOTYPE</b></td>
+<td>int AAS_MOD_Play( int <i>song_num</i> );</td>
+</tr>
+<tr>
+<td valign=top><b>FUNCTION</b></td>
+<td>Starts playing the specified MOD file.</td>
+</tr>
+<tr>
+<td valign=top><b>PARAMETERS</b></td>
+<td><table border=0 cellpadding=2 cellspacing=2>
+<tr>
+<td><b>Name</b></td>
+<td><b>Valid values</b></td>
+<td><b>Meaning</b></td>
+</tr>
+<tr>
+<td valign=top><i>song_num</i></td>
+<td valign=top>
+AAS_DATA_MOD_???, where ??? is the name of the MOD you wish to play (see your project's AAS_Data.h file for a complete list of all available MODs)
+</td>
+<td valign=top>Specifies the MOD you want to start playing</td>
+</tr>
+</table></td>
+</tr>
+<tr>
+<td valign=top><b>RETURNS</b></td>
+<td><table border=0 cellpadding=2 cellspacing=2>
+<tr>
+<td><i>AAS_OK</i></td>
+<td>:</td>
+<td>The function executed correctly.</td>
+</tr>
+<tr>
+<td><i>AAS_ERROR_MOD_DOES_NOT_EXIST</i></td>
+<td>:</td>
+<td>The MOD you requested does not exist.</td>
+</tr>
+<tr>
+<td><i>AAS_ERROR_CALL_SET_CONFIG_FIRST</i></td>
+<td>:</td>
+<td><a href="api_general.html#AAS_SetConfig">AAS_SetConfig</a> has not been successfully called yet. It must be successfully called at least once before calling this function.</td>
+</tr>
+<tr>
+<td><i>AAS_ERROR_NOT_ENOUGH_CHANNELS</i></td>
+<td>:</td>
+<td>The MOD you requested needs more channels than you have available.</td>
+</tr>
+</table></td>
+</tr>
+<tr>
+<td valign=top><b>NOTES</b></td>
+<td>
+<p>If an existing MOD file is already playing it will be replaced by the new selection. <a href="api_general.html#AAS_SetConfig">AAS_SetConfig</a> must be called at least once before calling this function. Any sound effects that are playing in the MOD channels will be stopped.</p>
+</td>
+</tr>
+</table>
+</blockquote>
+
+<br><font size=+1 color="#333377">:: <a name="AAS_MOD_SetLoop">AAS_MOD_SetLoop</a></font>
+<blockquote>
+<table border=0 cellpadding=2 cellspacing=10>
+<tr>
+<td valign=top><b>PROTOTYPE</b></td>
+<td>int AAS_MOD_SetLoop( AAS_BOOL <i>loop</i> );</td>
+</tr>
+<tr>
+<td valign=top><b>FUNCTION</b></td>
+<td>Specifies whether the current MOD will loop. All MODs loop by default.</td>
+</tr>
+<tr>
+<td valign=top><b>PARAMETERS</b></td>
+<td><table border=0 cellpadding=2 cellspacing=2>
+<tr>
+<td><b>Name</b></td>
+<td><b>Valid values</b></td>
+<td><b>Meaning</b></td>
+</tr>
+<tr>
+<td valign=top><i>loop</i></td>
+<td valign=top>
+AAS_TRUE or AAS_FALSE
+</td>
+<td valign=top>Specifies whether the current MOD will loop</td>
+</tr>
+</table></td>
+</tr>
+<tr>
+<td valign=top><b>RETURNS</b></td>
+<td><table border=0 cellpadding=2 cellspacing=2>
+<tr>
+<td><i>AAS_OK</i></td>
+<td>:</td>
+<td>The MOD has been set to loop as requested.</td>
+</tr>
+<tr>
+<td><i>AAS_ERROR_NO_MOD_PLAYING</i></td>
+<td>:</td>
+<td>The command failed because no MOD is currently playing.</td>
+</tr>
+<tr>
+<td><i>AAS_ERROR_CALL_SET_CONFIG_FIRST</i></td>
+<td>:</td>
+<td><a href="api_general.html#AAS_SetConfig">AAS_SetConfig</a> has not been successfully called yet. It must be successfully called at least once before calling this function.</td>
+</tr>
+</table></td>
+</tr>
+<tr>
+<td valign=top><b>NOTES</b></td>
+<td>All MODs loop by default. This means that if you want your MODs not to loop, you must call "AAS_MOD_SetLoop( AAS_FALSE );" immediately after the <a href="api_mod.html#AAS_MOD_Play">AAS_MOD_Play</a> command.</td>
+</tr>
+</table>
+</blockquote>
+
+<br><font size=+1 color="#333377">:: <a name="AAS_MOD_Stop">AAS_MOD_Stop</a></font>
+<blockquote>
+<table border=0 cellpadding=2 cellspacing=10>
+<tr>
+<td valign=top><b>PROTOTYPE</b></td>
+<td>void AAS_MOD_Stop();</td>
+</tr>
+<tr>
+<td valign=top><b>FUNCTION</b></td>
+<td>Stops playing current MOD.</td>
+</tr>
+<tr>
+<td valign=top><b>PARAMETERS</b></td>
+<td><i>None</i></td>
+</tr>
+<tr>
+<td valign=top><b>RETURNS</b></td>
+<td><i>Nothing</i></td>
+</tr>
+<tr>
+<td valign=top><b>NOTES</b></td>
+<td>
+<p>If a MOD is currently playing it will be stopped. Any sound effects that are playing in the MOD channels will be stopped - see <a href="api_general.html#AAS_SetConfig">AAS_SetConfig</a>.</p>
+</td>
+</tr>
+</table>
+</blockquote>
+
+<br><font size=+1 color="#333377">:: <a name="AAS_MOD_Pause">AAS_MOD_Pause</a></font>
+<blockquote>
+<table border=0 cellpadding=2 cellspacing=10>
+<tr>
+<td valign=top><b>PROTOTYPE</b></td>
+<td>void AAS_MOD_Pause();</td>
+</tr>
+<tr>
+<td valign=top><b>FUNCTION</b></td>
+<td>Pauses the current MOD. It can be continued later using <a href="api_mod.html#AAS_MOD_Resume">AAS_MOD_Resume</a>.</td>
+</tr>
+<tr>
+<td valign=top><b>PARAMETERS</b></td>
+<td><i>None</i></td>
+</tr>
+<tr>
+<td valign=top><b>RETURNS</b></td>
+<td><i>Nothing</i></td>
+</tr>
+<tr>
+<td valign=top><b>NOTES</b></td>
+<td>
+<p>Unlike <a href="api_mod.html#AAS_MOD_Stop">AAS_MOD_Stop</a>, the channels used by the MOD player are not returned for use as SFX channels when <a href="api_mod.html#AAS_MOD_Pause">AAS_MOD_Pause</a> is called.</p>
+</td>
+</tr>
+</table>
+</blockquote>
+
+<br><font size=+1 color="#333377">:: <a name="AAS_MOD_Resume">AAS_MOD_Resume</a></font>
+<blockquote>
+<table border=0 cellpadding=2 cellspacing=10>
+<tr>
+<td valign=top><b>PROTOTYPE</b></td>
+<td>void AAS_MOD_Resume();</td>
+</tr>
+<tr>
+<td valign=top><b>FUNCTION</b></td>
+<td>Resumes a MOD that was previously paused using <a href="api_mod.html#AAS_MOD_Pause">AAS_MOD_Pause</a>.</td>
+</tr>
+<tr>
+<td valign=top><b>PARAMETERS</b></td>
+<td><i>None</i></td>
+</tr>
+<tr>
+<td valign=top><b>RETURNS</b></td>
+<td><i>Nothing</i></td>
+</tr>
+<tr>
+<td valign=top><b>NOTES</b></td>
+<td>
+<p>Calling <a href="api_mod.html#AAS_MOD_Resume">AAS_MOD_Resume</a> without pausing a MOD beforehand using <a href="api_mod.html#AAS_MOD_Pause">AAS_MOD_Pause</a> will have no effect. Resuming a MOD that is already playing also has no effect.</p>
+</td>
+</tr>
+</table>
+</blockquote>
+
+<br><font size=+1 color="#333377">:: <a name="AAS_MOD_IsPlaying">AAS_MOD_IsPlaying</a></font>
+<blockquote>
+<table border=0 cellpadding=2 cellspacing=10>
+<tr>
+<td valign=top><b>PROTOTYPE</b></td>
+<td>AAS_BOOL AAS_MOD_IsPlaying();</td>
+</tr>
+<tr>
+<td valign=top><b>FUNCTION</b></td>
+<td>Checks whether a MOD is currently playing.</td>
+</tr>
+<tr>
+<td valign=top><b>PARAMETERS</b></td>
+<td><i>None</i></td>
+</tr>
+<tr>
+<td valign=top><b>RETURNS</b></td>
+<td><table border=0 cellpadding=2 cellspacing=2>
+<tr>
+<td><i>AAS_FALSE</i></td>
+<td>:</td>
+<td>No MOD is currently playing.</td>
+</tr>
+<tr>
+<td><i>AAS_TRUE</i></td>
+<td>:</td>
+<td>A MOD is currently playing.</td>
+</tr>
+</table></td>
+</tr>
+<tr>
+<td valign=top><b>NOTES</b></td>
+<td><i>None</i></td>
+</tr>
+</table>
+</blockquote>
+
+<br><font size=+1 color="#333377">:: <a name="AAS_MOD_HasLooped">AAS_MOD_HasLooped</a></font>
+<blockquote>
+<table border=0 cellpadding=2 cellspacing=10>
+<tr>
+<td valign=top><b>PROTOTYPE</b></td>
+<td>AAS_BOOL AAS_MOD_HasLooped();</td>
+</tr>
+<tr>
+<td valign=top><b>FUNCTION</b></td>
+<td>Checks whether or not the current MOD has looped.</td>
+</tr>
+<tr>
+<td valign=top><b>PARAMETERS</b></td>
+<td><i>None</i></td>
+</tr>
+<tr>
+<td valign=top><b>RETURNS</b></td>
+<td><table border=0 cellpadding=2 cellspacing=2>
+<tr>
+<td><i>AAS_FALSE</i></td>
+<td>:</td>
+<td>The MOD has not yet looped.</td>
+</tr>
+<tr>
+<td><i>AAS_TRUE</i></td>
+<td>:</td>
+<td>The MOD has looped.</td>
+</tr>
+</table></td>
+</tr>
+<tr>
+<td valign=top><b>NOTES</b></td>
+<td>Always returns AAS_FALSE if no MOD is playing or if AAS has not yet been initialised.</td>
+</tr>
+</table>
+</blockquote>
+
+<br><font size=+1 color="#333377">:: <a name="AAS_MOD_GetVolume">AAS_MOD_GetVolume</a></font>
+<blockquote>
+<table border=0 cellpadding=2 cellspacing=10>
+<tr>
+<td valign=top><b>PROTOTYPE</b></td>
+<td>int AAS_MOD_GetVolume();</td>
+</tr>
+<tr>
+<td valign=top><b>FUNCTION</b></td>
+<td>Returns the current volume for MOD tunes. 0 = silent, 256 = max.</td>
+</tr>
+<tr>
+<td valign=top><b>PARAMETERS</b></td>
+<td><i>None</i></td>
+</tr>
+<tr>
+<td valign=top><b>RETURNS</b></td>
+<td><table border=0 cellpadding=2 cellspacing=2>
+<tr>
+<td><i>0-256</i></td>
+<td>:</td>
+<td>The current MOD volume. 0 = silent, 256 = max.</td>
+</tr>
+</table></td>
+</tr>
+<tr>
+<td valign=top><b>NOTES</b></td>
+<td><i>None</i></td>
+</tr>
+</table>
+</blockquote>
+
+<br><font size=+1 color="#333377">:: <a name="AAS_MOD_SetVolume">AAS_MOD_SetVolume</a></font>
+<blockquote>
+<table border=0 cellpadding=2 cellspacing=10>
+<tr>
+<td valign=top><b>PROTOTYPE</b></td>
+<td>int AAS_MOD_SetVolume( int <i>vol</i> );</td>
+</tr>
+<tr>
+<td valign=top><b>FUNCTION</b></td>
+<td>Sets the current volume for MOD tunes. 0 = silent, 256 = max.</td>
+</tr>
+<tr>
+<td valign=top><b>PARAMETERS</b></td>
+<td><table border=0 cellpadding=2 cellspacing=2>
+<tr>
+<td><b>Name</b></td>
+<td><b>Valid values</b></td>
+<td><b>Meaning</b></td>
+</tr>
+<tr>
+<td valign=top><i>vol</i></td>
+<td valign=top>
+0-256
+</td>
+<td valign=top>Specifies the new volume you want MODs to be played at</td>
+</tr>
+</table></td>
+</tr>
+<tr>
+<td valign=top><b>RETURNS</b></td>
+<td><table border=0 cellpadding=2 cellspacing=2>
+<tr>
+<td><i>AAS_OK</i></td>
+<td>:</td>
+<td>The volume was successfully changed as requested.</td>
+</tr>
+<tr>
+<td><i>AAS_ERROR_VOLUME_OUT_OF_RANGE</i></td>
+<td>:</td>
+<td>The volume was not in the range 0-256. The MOD volume has not been adjusted.</td>
+</tr>
+</table></td>
+</tr>
+<tr>
+<td valign=top><b>NOTES</b></td>
+<td><i>None</i></td>
+</tr>
+</table>
+</blockquote>
+
+<br><font size=+1 color="#333377">:: <a name="AAS_MOD_GetSongPos">AAS_MOD_GetSongPos</a></font>
+<blockquote>
+<table border=0 cellpadding=2 cellspacing=10>
+<tr>
+<td valign=top><b>PROTOTYPE</b></td>
+<td>int AAS_MOD_GetSongPos();</td>
+</tr>
+<tr>
+<td valign=top><b>FUNCTION</b></td>
+<td>Returns the current song position of the playing MOD.</td>
+</tr>
+<tr>
+<td valign=top><b>PARAMETERS</b></td>
+<td><i>None</i></td>
+</tr>
+<tr>
+<td valign=top><b>RETURNS</b></td>
+<td><table border=0 cellpadding=2 cellspacing=2>
+<tr>
+<td><i>0-127</i></td>
+<td>:</td>
+<td>The current song position.</td>
+</tr>
+<tr>
+<td><i>AAS_ERROR_NO_MOD_PLAYING</i></td>
+<td>:</td>
+<td>There is no MOD currently playing.</td>
+</tr>
+</table></td>
+</tr>
+<tr>
+<td valign=top><b>NOTES</b></td>
+<td><i>None</i></td>
+</tr>
+</table>
+</blockquote>
+
+<br><font size=+1 color="#333377">:: <a name="AAS_MOD_SetSongPos">AAS_MOD_SetSongPos</a></font>
+<blockquote>
+<table border=0 cellpadding=2 cellspacing=10>
+<tr>
+<td valign=top><b>PROTOTYPE</b></td>
+<td>int AAS_MOD_SetSongPos( int song_pos );</td>
+</tr>
+<tr>
+<td valign=top><b>FUNCTION</b></td>
+<td>Immediately jumps to the specified song position.</td>
+</tr>
+<tr>
+<td valign=top><b>PARAMETERS</b></td>
+<td><table border=0 cellpadding=2 cellspacing=2>
+<tr>
+<td><b>Name</b></td>
+<td><b>Valid values</b></td>
+<td><b>Meaning</b></td>
+</tr>
+<tr>
+<td valign=top><i>song_pos</i></td>
+<td valign=top>
+0-127
+</td>
+<td valign=top>Specifies the new song position</td>
+</tr>
+</table></td>
+</tr>
+<tr>
+<td valign=top><b>RETURNS</b></td>
+<td><table border=0 cellpadding=2 cellspacing=2>
+<tr>
+<td><i>AAS_OK</i></td>
+<td>:</td>
+<td>The function executed correctly.</td>
+</tr>
+<tr>
+<td><i>AAS_ERROR_INVALID_SONG_POS</i></td>
+<td>:</td>
+<td>The specified song position does not exist.</td>
+</tr>
+<tr>
+<td><i>AAS_ERROR_NO_MOD_PLAYING</i></td>
+<td>:</td>
+<td>There is no MOD currently playing.</td>
+</tr>
+</table></td>
+</tr>
+<tr>
+<td valign=top><b>NOTES</b></td>
+<td><i>None</i></td>
+</tr>
+</table>
+</blockquote>
+
+<br><font size=+1 color="#333377">:: <a name="AAS_MOD_QueueSongPos">AAS_MOD_QueueSongPos</a></font>
+<blockquote>
+<table border=0 cellpadding=2 cellspacing=10>
+<tr>
+<td valign=top><b>PROTOTYPE</b></td>
+<td>int AAS_MOD_QueueSongPos( int song_pos );</td>
+</tr>
+<tr>
+<td valign=top><b>FUNCTION</b></td>
+<td>Jumps to the specified song position when the current pattern finishes.</td>
+</tr>
+<tr>
+<td valign=top><b>PARAMETERS</b></td>
+<td><table border=0 cellpadding=2 cellspacing=2>
+<tr>
+<td><b>Name</b></td>
+<td><b>Valid values</b></td>
+<td><b>Meaning</b></td>
+</tr>
+<tr>
+<td valign=top><i>song_pos</i></td>
+<td valign=top>
+0-127
+</td>
+<td valign=top>Specifies the new song position</td>
+</tr>
+</table></td>
+</tr>
+<tr>
+<td valign=top><b>RETURNS</b></td>
+<td><table border=0 cellpadding=2 cellspacing=2>
+<tr>
+<td><i>AAS_OK</i></td>
+<td>:</td>
+<td>The function executed correctly.</td>
+</tr>
+<tr>
+<td><i>AAS_ERROR_INVALID_SONG_POS</i></td>
+<td>:</td>
+<td>The specified song position does not exist.</td>
+</tr>
+<tr>
+<td><i>AAS_ERROR_NO_MOD_PLAYING</i></td>
+<td>:</td>
+<td>There is no MOD currently playing.</td>
+</tr>
+</table></td>
+</tr>
+<tr>
+<td valign=top><b>NOTES</b></td>
+<td><i>None</i></td>
+</tr>
+</table>
+</blockquote>
+
+<br><font size=+1 color="#333377">:: <a name="AAS_MOD_GetLineNum">AAS_MOD_GetLineNum</a></font>
+<blockquote>
+<table border=0 cellpadding=2 cellspacing=10>
+<tr>
+<td valign=top><b>PROTOTYPE</b></td>
+<td>int AAS_MOD_GetLineNum();</td>
+</tr>
+<tr>
+<td valign=top><b>FUNCTION</b></td>
+<td>Returns the current line number of the playing MOD.</td>
+</tr>
+<tr>
+<td valign=top><b>PARAMETERS</b></td>
+<td><i>None</i></td>
+</tr>
+<tr>
+<td valign=top><b>RETURNS</b></td>
+<td><table border=0 cellpadding=2 cellspacing=2>
+<tr>
+<td><i>0-63</i></td>
+<td>:</td>
+<td>The current line number.</td>
+</tr>
+<tr>
+<td><i>AAS_ERROR_NO_MOD_PLAYING</i></td>
+<td>:</td>
+<td>There is no MOD currently playing.</td>
+</tr>
+</table></td>
+</tr>
+<tr>
+<td valign=top><b>NOTES</b></td>
+<td><i>None</i></td>
+</tr>
+</table>
+</blockquote>
+
+<br><font size=+1 color="#333377">:: <a name="AAS_MOD_GetLastFilterValue">AAS_MOD_GetLastFilterValue</a></font>
+<blockquote>
+<table border=0 cellpadding=2 cellspacing=10>
+<tr>
+<td valign=top><b>PROTOTYPE</b></td>
+<td>int AAS_MOD_GetLastFilterValue();</td>
+</tr>
+<tr>
+<td valign=top><b>FUNCTION</b></td>
+<td>Returns the value specified by the most recent "E0: Set Filter" effect. Can be used to sychronise code with the music.</td>
+</tr>
+<tr>
+<td valign=top><b>PARAMETERS</b></td>
+<td><i>None</i></td>
+</tr>
+<tr>
+<td valign=top><b>RETURNS</b></td>
+<td><table border=0 cellpadding=2 cellspacing=2>
+<tr>
+<td><i>0-15</i></td>
+<td>:</td>
+<td>The most recent value specified by an "E0: Set Filter" effect.</td>
+</tr>
+</table></td>
+</tr>
+<tr>
+<td valign=top><b>NOTES</b></td>
+<td>Will return 0 if no "E0: Set Filter" effect has yet been found, if no MOD is playing or if AAS has not been initialised. The "E0: Set Filter" effect makes no difference to the sound output of AAS as the GBA has no hardware filter so it is safe to change whilst a piece of music is playing.</td>
+</tr>
+</table>
+</blockquote>
+
+<br><font size=+1 color="#333377">:: <a name="AAS_MOD_GetNumChannels">AAS_MOD_GetNumChannels</a></font>
+<blockquote>
+<table border=0 cellpadding=2 cellspacing=10>
+<tr>
+<td valign=top><b>PROTOTYPE</b></td>
+<td>int AAS_MOD_GetNumChannels();</td>
+</tr>
+<tr>
+<td valign=top><b>FUNCTION</b></td>
+<td>Returns the number of channels that are currently being reserved by the MOD.</td>
+</tr>
+<tr>
+<td valign=top><b>PARAMETERS</b></td>
+<td><i>None</i></td>
+<tr>
+<td valign=top><b>RETURNS</b></td>
+<td><table border=0 cellpadding=2 cellspacing=2>
+<tr>
+<td><i>0-16</i></td>
+<td>:</td>
+<td>The number of channels that are currently being reserved by the MOD.</td>
+</tr>
+</table></td>
+</tr>
+<tr>
+<td valign=top><b>NOTES</b></td>
+<td>
+<p><i>None</i></p>
+</td>
+</tr>
+</table>
+</blockquote>
+
+</body>
+</html>

@@ -1,0 +1,131 @@
+<html>
+<style type="text/css">
+<!--
+TD {font-size: 10pt; font-family: Verdana,Arial,Helvetica,sans-serif}
+BODY {font-size: 10pt; font-family: Verdana,Arial,Helvetica,sans-serif}
+A { text-decoration: none }
+a:hover { text-decoration: underline}
+pre {font-family: monospace}
+-->
+</style>
+
+<title>AAS Instructions</title>
+<body bgcolor="#FFFFFF" vlink="#990000" link="#990000" alink="#990000" text="#000000">
+
+<table border=0 width=100% cellpadding=0 cellspacing=0>
+<tr>
+<td nowrap valign=middle align=left>
+<table border=0 cellpadding=0 cellspacing=0>
+<tr>
+<td nowrap valign=middle align=left>
+<a href="http://www.apex-designs.net/tools_aas.html"><img src="images/aas_logo.gif" alt="[Image]" width=57 height=58 border=0></a>&nbsp;
+</td>
+<td nowrap valign=middle align=left>
+<b>APEX AUDIO SYSTEM</b><br>
+<i>Instruction Manual</i>
+</td>
+</tr>
+</table>
+</td>
+<td width=100% valign=middle align=center>
+<hr width=90%>
+</td>
+<td nowrap valign=middle align=right>
+<font color="#333377">intro</font> | <a href="getting_started.html">getting started</a> | <a href="conv2aas.html">conv2aas</a> | <a href="example.html">example</a> | <a href="faq.html">faq</a><br>
+<b>api :</b> <a href="api_index.html">index</a> | <a href="api_general.html">general</a> | <a href="api_sfx.html">sfx</a> | <a href="api_mod.html">mod</a> | <a href="api_misc.html">misc</a> | <a href="api_mixer.html">mixer</a>
+</td>
+</tr>
+</table>
+
+<br>
+
+<br><font size=+1 color="#333377">:: What Is It?</font>
+<blockquote>
+
+<p>The Apex Audio System (AAS) is a sound library for the GBA. It includes a highly efficient mixer, MOD playing routines and support for up to 16 channels. It is designed for developers using a GCC-based development environment.</p>
+
+<table border=0 width=100% cellpadding=2 cellspacing=2>
+<tr>
+<td valign=top><b>MIXING RATE</b></td>
+<td>8-32 KHz, optionally dynamic.</td>
+</tr>
+<tr>
+<td valign=top><b>NUMBER OF CHANNELS</b></td>
+<td>Up to 16.</td>
+</tr>
+<tr>
+<td valign=top><b>FEATURES (PER CHANNEL)</b></td>
+<td>Looping, pitch and volume control.</td>
+</tr>
+<tr>
+<td valign=top><b>MEMORY USAGE</b></td>
+<td>~3.2K IWRAM, ~3.3K EWRAM (includes code and all buffers).</td>
+</tr>
+</table>
+
+</blockquote>
+<br><font size=+1 color="#333377">:: How Fast Is It?</font>
+<blockquote>
+
+<p>AAS includes easily the fastest audio system yet made for the GBA, using an average of only ~1% CPU per active channel at 32 KHz. (Most GBA mixers use at least twice as much CPU power mixing at just 16 KHz!) AAS also supports up 16 channels and a dynamic mixing rate that adjusts automatically depending on the pitch of the sounds being played.</p>
+
+<p>The exact CPU usage varies depending on the configuration, but the average CPU usage for CreamOfTheEarth.mod in different situations is shown below:</p>
+
+<table align=center border=0 width=50% cellpadding=2 cellspacing=2>
+<tr>
+<td align=left width=33%><b>Mixing mode</b></td>
+<td align=center width=33%><b>Mono</b></td>
+<td align=center width=33%><b>Stereo</b></td>
+</tr>
+<tr>
+<td align=left>32 KHz</td>
+<td align=center>3.6%</td>
+<td align=center>4.1%</td>
+</tr>
+<tr>
+<td align=left>32 KHz, dynamic</td>
+<td align=center>3.0%</td>
+<td align=center>3.2%</td>
+</tr>
+<tr>
+<td align=left>24 KHz</td>
+<td align=center>3.2%</td>
+<td align=center>3.5%</td>
+</tr>
+<tr>
+<td align=left>24 KHz, dynamic</td>
+<td align=center>3.0%</td>
+<td align=center>3.2%</td>
+</tr>
+<tr>
+<td align=left>16 KHz</td>
+<td align=center>2.7%</td>
+<td align=center>3.0%</td>
+</tr>
+<tr>
+<td align=left>16 KHz, dynamic</td>
+<td align=center>2.7%</td>
+<td align=center>3.0%</td>
+</tr>
+</table>
+
+</blockquote>
+<br><font size=+1 color="#333377">:: Licensing</font>
+<blockquote>
+
+<p>AAS is free for non-commercial use, although you must display the AAS splash screen using the AAS_ShowLogo() function when the program is first started if you distribute your work.</p>
+
+<p>Commercial developers are not required to display the splash screen but need a license in order to use AAS in a published title. To discuss licensing terms, please contact us at <a href="mailto:licensing@apex-designs.net">licensing@apex-designs.net<a/>.</p>
+
+</blockquote>
+<br><font size=+1 color="#333377">:: Contacting Us</font>
+<blockquote>
+
+<p>Any questions, suggestions or bug reports should be sent to <a href="mailto:tools@apex-designs.net">tools@apex-designs.net<a/>.</p>
+
+<p>You can download the latest version of AAS from our website here: <a href="http://www.apex-designs.net/tools_aas.html">http://www.apex-designs.net/tools_aas.html</a>
+
+</blockquote>
+
+</body>
+</html>
