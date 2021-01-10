@@ -42,7 +42,7 @@ void AgbMain()
 	AAS_MOD_Play( AAS_DATA_MOD_FlatOutLies );
 	
 	// Show AAS Logo (required for non-commercial projects)
-	AAS_ShowLogo();
+	// AAS_ShowLogo();
 	
 	// Main loop
 	do
