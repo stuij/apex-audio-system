@@ -1,0 +1,10 @@
+build
+*.o
+*.sav
+*.tmp
+*.gba
+*.out
+*.a
+conv2aas
+AAS_Data.h
+AAS_Data.s
