@@ -1,3 +1,7 @@
+// Copyright (c) 2003-2021 James Daniels
+// Distributed under the MIT License
+// license terms: see LICENSE file in root or http://opensource.org/licenses/MIT
+
 #include "AAS_Shared.h"
 
 extern const int AAS_data_v111;

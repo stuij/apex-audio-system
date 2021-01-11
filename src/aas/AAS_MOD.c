@@ -1,3 +1,7 @@
+// Copyright (c) 2003-2021 James Daniels
+// Distributed under the MIT License
+// license terms: see LICENSE file in root or http://opensource.org/licenses/MIT
+
 #include "AAS_Shared.h"
 
 AAS_s16 AAS_mod_num AAS_IN_EWRAM = -1;

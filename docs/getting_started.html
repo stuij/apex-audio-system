@@ -39,10 +39,68 @@ pre {font-family: monospace}
 
 <br>
 
+<br><font size=+1 color="#333377">:: Building AAS components</font>
+<blockquote>
+
+<p>We use a makefile in the root of the repo to build the library, conversion tool and examples. It is expected that you have a cross-compiler and a host compiler installed on your system. The paths to these need to be configured at the top of the makefile:</p>
+<ul>
+<li><b>$(CROSS)</b>: The directory path and prefix of the cross-compilation tools. For example, if you have installed devkitPro to the default location, and the tools aren't visible in your <b>PATH</b>, the line would be:
+  <ul>
+  <li><tt>export CROSS = /opt/devkitpro/devkitARM/bin/arm-none-eabi-</tt></li>
+  </ul>
+</li>
+<li><b>$(PREFIX)</b>: The directory path and prefix of the host compiler. This can normally be left as is, but for example it could have been installed in user/local:
+  <ul>
+  <li><tt>export PREFIX = /usr/local/</tt></li>
+  </ul>
+</li>
+</ul>
+
+<p>Run <tt>make</tt> without arguments in the root of the repo to build aas, conv2aas and the examples</p>. The files can be found in &lsaquo;root&rsaquo;/<b>build</b>:</p>
+<ul>
+<li><b>aas</b> : Folder. Contents:
+  <ul>
+  <li><b>lib</b> : Folder. Contents:
+    <ul>
+    <li><b>LibAAS.a</b> : Main AAS Library.</li>
+    </ul>
+  </li>
+  <li><b>include</b> : Folder. Contents:
+    <ul>
+    <li><b>AAS.h</b> : Main AAS header file. Should always be included in your projects.</li>
+    <li><b>AAS_Mixer.h</b> : Optional AAS header file. Should only be included if you intend to access the mixer directly (not recommended).</li>
+    </ul>
+  </lib>
+  </ul>
+</li>
+<li><b>conv2aas</b> : Folder. Contents:
+  <ul>
+  <li><b>conv2aas</b></li>
+  </ul>
+</li>
+<li><b>examples</b> : Folder. Contents:
+  <ul>
+  <li><b>AASExample.gba</b>: AAS Example for projects with no other CPU intensive interrupts</li>
+  <li><b>AASExample2.gba</b>: AAS Example for projects with other CPU intensive interrupts</li>
+  <li><b>AASExamplePlusPlus</b>: AAS C++ Example for projects with no other CPU intensive interrupts</li>
+  </ul>
+</li>
+</ul>
+
+<p>To build one or more individual components, add their name as argument to the makefile:</p>
+<ul>
+<li>aas</li>
+<li>conv2aas</li>
+<li>example</li>
+<li>example2</li>
+<li>example_cpp</li>
+</ul>
+
+</blockquote>
 <br><font size=+1 color="#333377">:: First Steps</font>
 <blockquote>
 
-<p>First of all, the user must include the AAS header files ("AAS.h" and, optionally, "AAS_Mixer.h") and link "libAAS.a" with their project. Next, the interrupt handling routines must be set up so that a Timer 1 interrupt results in a call to <a href="api_general.html#AAS_Timer1InterruptHandler">AAS_Timer1InterruptHandler</a> (or <a href="api_general.html#AAS_FastTimer1InterruptHandler">AAS_FastTimer1InterruptHandler</a> with a seperate call to <a href="api_general.html#AAS_DoWork">AAS_DoWork</a> later if "AAS_MultipleInterrupts" are being used). The <a href="example.html">example code</a> included with AAS demonstrates how to do this, and users are encouraged to reuse the code shown in their own projects.</p>
+<p>Once the library and conv2aas are built, the user must include the AAS header files ("AAS.h" and, optionally, "AAS_Mixer.h") and link "libAAS.a" with their project. Next, the interrupt handling routines must be set up so that a Timer 1 interrupt results in a call to <a href="api_general.html#AAS_Timer1InterruptHandler">AAS_Timer1InterruptHandler</a> (or <a href="api_general.html#AAS_FastTimer1InterruptHandler">AAS_FastTimer1InterruptHandler</a> with a seperate call to <a href="api_general.html#AAS_DoWork">AAS_DoWork</a> later if "AAS_MultipleInterrupts" are being used). The <a href="example.html">example code</a> included with AAS demonstrates how to do this, and users are encouraged to reuse the code shown in their own projects.</p>
 
 <p>It is also recommended that the project's makefile be modified so that <a href="conv2aas.html">Conv2AAS</a> is automatically called when the project is compiled, and its output is assembled and linked with the main code. The makefile included with the <a href="example.html">example code</a> shows how to do this.</p>
 

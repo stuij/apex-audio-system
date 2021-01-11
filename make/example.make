@@ -17,8 +17,13 @@ IWRAM =
 
 include ../../make/common.make
 
+CONV2AAS_FILE = conv2aas
+ifeq ($(OS),Windows_NT)
+	CONV2AAS_FILE = conv2aas.exe
+endif
+
 AAS_Data.o:
-	../../build/conv2aas/conv2aas AAS_Data
+	../../build/conv2aas/$(CONV2AAS_FILE) AAS_Data
 	$(AS) $(ASFLAGS) -o $@ AAS_Data.s
 
 $(NAME): crt0.o $(IWRAM) $(GFX) $(SOUND) $(SRC)

@@ -39,64 +39,6 @@ pre {font-family: monospace}
 
 <br>
 
-<br><font size=+1 color="#333377">:: Why do I get "undefined reference to _call_via_r3" when I link to AAS?</font>
-<blockquote>
-
-<p>This is usually caused by using ld to do the linking rather than gcc. (The "_call_via_rX" functions are defined in libgcc.a which is usually automatically linked to your project if you use gcc to link, but not if you use ld.)</p>
-
-</blockquote>
-<br><font size=+1 color="#333377">:: How do I use AAS with DevKitArm?</font>
-<blockquote>
-
-<p>AAS itself works fine with DevKitArm, but in order to get AASExample to compile under DevKitArm, you need to make the following changes to the makefile:</p>
-
-<ul>
-<li>"CROSS" needs to be changed from "arm-agb-elf-" to "arm-elf-".</li>
-<li>"-Xlinker -Map $(MAP)" needs to be removed from LDFLAGS. (This may be a bug in DevKitArm.)</li>
-</ul>
-
-<p>Also, assuming you're using Windows, you'll need to delete the Linux version of Conv2AAS (which has a filename of "conv2aas" (as opposed to "conv2aas.exe" for the Windows version)) from the AASExample folder to stop DevKitArm from attempting to use the wrong executable.</p>
-
-</blockquote>
-<br><font size=+1 color="#333377">:: How do I get AAS to work with HAM?</font>
-<blockquote>
-
-<p>There's a pretty good explanation online <a href="http://www.ngine.de/site/modules.php?name=Forums&file=viewtopic&p=2031#2031">here</a>.</p>
-
-</blockquote>
-<br><font size=+1 color="#333377">:: I've just upgraded from AAS v1.03 to v1.04 and now my code won't compile. Why?</font>
-<blockquote>
-
-<p>In order to avoid clashes with the user's own declarations, some of the variable types and definitions in AAS.h were renamed in v1.04:</p>
-
-<ul>
-<li>u32 -> AAS_u32</li>
-<li>s32 -> AAS_s32</li>
-<li>u16 -> AAS_u16</li>
-<li>s16 -> AAS_s16</li>
-<li>u8 -> AAS_u8</li>
-<li>s8 -> AAS_s8</li>
-<li>BOOL -> AAS_BOOL</li>
-<li>TRUE -> AAS_TRUE</li>
-<li>FALSE -> AAS_FALSE</li>
-<li>NULL -> AAS_NULL</li>
-</ul>
-
-<p>To fix this, you should either change your code to use the new definitions or you should add the declarations below whenever AAS.h is included in your code:</p>
-
-<pre>
-#define u32 unsigned int
-#define s32 signed int
-#define u16 unsigned short
-#define s16 signed short
-#define u8 unsigned char
-#define s8 signed char
-#define BOOL unsigned char
-#define TRUE 1
-#define FALSE 0
-#define NULL 0</pre>
-
-</blockquote>
 <br><font size=+1 color="#333377">:: How do I reference AAS sounds with numbers?</font>
 <blockquote>
 

@@ -14,6 +14,9 @@ LDFLAGS =
 
 # Name of output targets.
 TARGET = conv2aas
+ifeq ($(OS),Windows_NT)
+	TARGET = conv2aas.exe
+endif
 
 # C source files.
 SRC =	Main.o

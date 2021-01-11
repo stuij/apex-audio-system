@@ -1,3 +1,7 @@
+// Copyright (c) 2003-2021 James Daniels
+// Distributed under the MIT License
+// license terms: see LICENSE file in root or http://opensource.org/licenses/MIT
+
 #ifndef __AAS_SHARED__
 #define __AAS_SHARED__
 
