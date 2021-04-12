@@ -41,7 +41,7 @@ void AgbMain()
 	// Start playing MOD
 	AAS_MOD_Play( AAS_DATA_MOD_FlatOutLies );
 	
-	// Show AAS Logo (required for non-commercial projects)
+	// Show AAS Logo (not required)
 	// AAS_ShowLogo();
 	
 	// Main loop

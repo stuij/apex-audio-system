@@ -6,13 +6,13 @@ designed for developers using a GCC-based development environment. AAS uses RAW,
 WAV or *tracker 1-16 channel MOD files as input.
 
 
-### Documentation
+## Documentation
 
 AAS is fairly well documented. From building the library to a starter guide to
 an extensive description of the api. See <root>/docs/index.html
 
 
-### History
+## History
 
 Apex Audio System was made by James Daniels of Apex Systems back in 2003 for the
 GBA version of Payback. The library underwent several revisions, the latest of
@@ -20,12 +20,12 @@ which was v1.11. At the beginning of 2021, James was so kind to donate the
 sources to the community, hence this Git repo.
 
 
-### Latest release
+## Latest release
 
 The current release is v1.12. See the documentation for a list of changes.
 
 
-### Contact
+## Contact
 
 Github project page: https://github.com/stuij/apex-audio-system
 
@@ -36,7 +36,7 @@ For a more realtime interactive experience, join gbadev on Discord. There's a
 good chance there's one or two people there that have used AAS before.
 
 
-### License
+## License
 
 AAS is now distributed under the MIT license. For licensing terms, see the
 LICENSE file in the root of this repo or go to
