@@ -34,17 +34,17 @@
 #define REG_IME        (*(volatile AAS_u16 *)0x4000208)
 #define REG_IF         (*(volatile AAS_u16 *)0x4000202)
 
-#define	DISPCNT		     (*(volatile AAS_u16 *)0x4000000)
+#define	DISPCNT		   (*(volatile AAS_u16 *)0x4000000)
 #define REG_VCOUNT     (*(volatile AAS_u16 *)0x4000006)
 
 struct AAS_ModSample
 {
-	AAS_u32 data; // offset in bytes
-	AAS_u16 repeat; // in halfwords
-	AAS_u16 length; // in halfwords
-	AAS_u8 finetune;
-	AAS_u8 volume;
-	AAS_u16 padding;
+  AAS_u32 data;   // offset in bytes
+  AAS_u16 repeat; // in halfwords
+  AAS_u16 length; // in halfwords
+  AAS_u8 finetune;
+  AAS_u8 volume;
+  AAS_u16 padding;
 };
 
 extern const AAS_u16 AAS_DATA_NUM_MODS;
@@ -72,12 +72,11 @@ extern AAS_BOOL AAS_changed[2] AAS_IN_IWRAM;
 
 extern AAS_u8 AAS_chan_rearrange[AAS_MAX_CHANNELS] AAS_IN_EWRAM;
 
-__inline static int AAS_Min( int a, int b )
-{
-  if ( a < b )
-      return a;
+__inline static int AAS_Min(int a, int b) {
+  if (a < b)
+    return a;
   else
-      return b;
+    return b;
 }
 
 #endif
