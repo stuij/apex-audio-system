@@ -1,15 +1,15 @@
 # Library and include paths.
-LIBS = -L../../build/aas/lib -lAAS
-INCLUDES = -I../../build/aas/include
+LIBS = -L../../build/aas/lib -lAAS -L$(DEVKITARM)/../libtonc/lib -ltonc
+INCLUDES = -I../../build/aas/include -I$(DEVKITARM)/../libtonc/include
 
 # Files you want to go in ROM (AAS_Data.o must go first)
 SRC =	AAS_Data.o AASExample.o
 
 MAP = map.out
-LDFLAGS = -mthumb-interwork -Xlinker -Map $(MAP) -nostartfiles -Tlnkscript
+LDFLAGS = -Wl,-Map,$(MAP) -specs=gba.specs
 
 # Name of output targets.
-NAME = $(SHORTNAME).tmp
+TMPNAME = $(SHORTNAME).tmp
 TARGET = $(SHORTNAME).gba
 
 # Files you want to go in IWRAM.
@@ -26,14 +26,14 @@ AAS_Data.o:
 	../../build/conv2aas/$(CONV2AAS_FILE) AAS_Data
 	$(AS) $(ASFLAGS) -o $@ AAS_Data.s
 
-$(NAME): crt0.o $(IWRAM) $(GFX) $(SOUND) $(SRC)
+$(TMPNAME): $(IWRAM) $(GFX) $(SOUND) $(SRC)
 	touch $(MAP)
-	$(LD) $(LDFLAGS) -o $@ crt0.o $(SRC) $(IWRAM) $(GFX) $(SOUND) $(LIBS)
+	$(LD) $(LDFLAGS) -o $@ $(SRC) $(IWRAM) $(GFX) $(SOUND) $(LIBS)
 	$(CROSS)size $@
 
-$(TARGET): $(NAME)
+$(TARGET): $(TMPNAME)
 	$(CROSS)objcopy -v -O binary $< $@
 	gbafix $@
 
 clean:
-	rm -f *.o AAS_Data.h AAS_Data.s $(TARGET) $(NAME) $(GFX) $(SOUND) $(SYMBOLS) $(MAP)
+	rm -f *.o AAS_Data.h AAS_Data.s $(TARGET) $(TMPNAME) $(GFX) $(SOUND) $(SYMBOLS) $(MAP)

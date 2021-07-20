@@ -1,48 +1,18 @@
 // AAS Example for projects with other CPU intensive interrupts
 // Notes:
-//  + Specially modified crt0.s file included with the example must be set to
-//    use __AAS_MultipleInterrupts
 //  + AAS_DoWork() must be called at least 50 times/sec. In this example, it's
 //    being called during VBlank.
 
 #include "AAS.h"
 #include "AAS_Data.h"
-
-// Registers for interrupt handler
-#define REG_IE (*(volatile AAS_u16 *)0x4000200)
-#define REG_IME (*(volatile AAS_u16 *)0x4000208)
-#define REG_DISPSTAT (*(volatile AAS_u16 *)0x04000004)
-
-void VBlankInterruptHandler() {
-  AAS_DoWork();
-
-  // Insert your own VBlank code here
-}
-
-void UnusedInterruptHandler(){};
-
-void (*AAS_IntrTable[13])(void) = {
-    VBlankInterruptHandler, // VBlank Interrupt
-    UnusedInterruptHandler, // HBlank Interrupt
-    UnusedInterruptHandler, // V Counter Interrupt
-    UnusedInterruptHandler, // Timer 0 Interrupt
-    UnusedInterruptHandler, // Timer 2 Interrupt
-    UnusedInterruptHandler, // Timer 3 Interrupt
-    UnusedInterruptHandler, // Serial Communication Interrupt
-    UnusedInterruptHandler, // DMA0 Interrupt
-    UnusedInterruptHandler, // DMA1 Interrupt
-    UnusedInterruptHandler, // DMA2 Interrupt
-    UnusedInterruptHandler, // DMA3 Interrupt
-    UnusedInterruptHandler, // Key Interrupt
-    UnusedInterruptHandler  // Cart Interrupt
-};
+#include "tonc.h"
 
 // Registers for GBA keys
 #define REG_KEY (*(volatile AAS_u16 *)0x04000130)
 #define REG_KEY_A 0x0001
 #define REG_KEY_B 0x0002
 
-void AgbMain() {
+void main() {
   int keys, keys_changed;
   int prev_keys = 0;
 
@@ -54,6 +24,13 @@ void AgbMain() {
   AAS_SetConfig(AAS_CONFIG_MIX_32KHZ, AAS_CONFIG_CHANS_8,
                 AAS_CONFIG_SPATIAL_STEREO, AAS_CONFIG_DYNAMIC_OFF);
 
+  // Set up the interrupt handlers
+  irq_init(NULL);
+  // set timer 1 to AAS_FastTimer1InterruptHandler()
+  irq_add(II_TIMER1, AAS_FastTimer1InterruptHandler);
+  // call AAS_DoWork() during vblank
+  irq_add(II_VBLANK, AAS_DoWork);
+  
   // Start playing MOD
   AAS_MOD_Play(AAS_DATA_MOD_CreamOfTheEarth);
 

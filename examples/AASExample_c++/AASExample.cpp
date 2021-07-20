@@ -1,37 +1,18 @@
 // AAS C++ Example for projects with no other CPU intensive interrupts
 // Notes:
-//  + crt0.s file included with the example should be set to use
-//    __FastInterrupts.
-//  + Can also be made to work with __SingleInterrupts and __MultipleInterrupts.
-//  + Use __AAS_MultipleInterrupts when there are other CPU intensive interrupts
-//    - see AASExample2.
+//  + Use AAS_FastTimer1InterruptHandler() with AAS_DoWork() when there are
+//    other CPU intensive interrupts - see AASExample2.
 
 #include "AAS.h"
 #include "AAS_Data.h"
-
-// Registers for interrupt handler
-#define REG_IE (*(volatile AAS_u16 *)0x4000200)
-#define REG_IF (*(volatile AAS_u16 *)0x4000202)
-
-extern "C" void InterruptProcess() {
-  AAS_u16 intr_bits = REG_IE & REG_IF;
-
-  // It's best to test for AAS's Timer 1 interrupt first
-  if (intr_bits & 0x10) // Timer 1
-    AAS_Timer1InterruptHandler();
-
-  // Process other interrupts here by testing appropriate bits of "intr_bits"
-
-  // Clear the interrupt flags
-  REG_IF |= REG_IF;
-}
+#include "tonc.h"
 
 // Registers for GBA keys
 #define REG_KEY (*(volatile AAS_u16 *)0x04000130)
 #define REG_KEY_A 0x0001
 #define REG_KEY_B 0x0002
 
-extern "C" void AgbMain() {
+extern "C" int main() {
   int keys, keys_changed;
   int prev_keys = 0;
 
@@ -39,11 +20,16 @@ extern "C" void AgbMain() {
   AAS_SetConfig(AAS_CONFIG_MIX_32KHZ, AAS_CONFIG_CHANS_8,
                 AAS_CONFIG_SPATIAL_STEREO, AAS_CONFIG_DYNAMIC_OFF);
 
+  // Set up the interrupt handlers
+  irq_init(NULL);
+  // set timer 1 to AAS_Timer1InterruptHandler()
+  irq_add(II_TIMER1, AAS_Timer1InterruptHandler);
+
   // Start playing MOD
   AAS_MOD_Play(AAS_DATA_MOD_its_just_sonorous);
 
   // Show AAS Logo (not required)
-  // AAS_ShowLogo();
+  AAS_ShowLogo();
 
   // Main loop
   do {
@@ -67,4 +53,6 @@ extern "C" void AgbMain() {
       AAS_SFX_Play(1, 64, 8000, AAS_DATA_SFX_START_Boom, AAS_DATA_SFX_END_Boom,
                    AAS_NULL);
   } while (1);
+
+  return 0;
 }
