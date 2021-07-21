@@ -1054,158 +1054,159 @@ int main(int argc, char *argv[]) {
 
   if (argc < 2) {
     ShowHelp();
+    return 1;
   } else if ((argc == 2) && ((strcmp(argv[1], "-help") == 0) ||
                              (strcmp(argv[1], "-?") == 0))) {
     ShowHelp();
-  } else {
-    FILE *out_file_s;
+    return 0;
+  }
 
-    out_file_s = fopen("./AAS_Data.s", "w");
-    if (out_file_s) {
-      FILE *out_file_h;
+  FILE *out_file_s;
+  out_file_s = fopen("./AAS_Data.s", "w");
+  if (!out_file_s) {
+    printf("Unable to open AASData.s for writing...\n");
+    return 1;
+  }
 
-      out_file_h = fopen("./AAS_Data.h", "w");
-      if (out_file_h) {
-        DIR *dir_info;
+  FILE *out_file_h;
+  out_file_h = fopen("./AAS_Data.h", "w");
+  if (!out_file_h) {
+    printf("Unable to open AASData.h for writing...\n");
+    return 1;
+  }
 
-        dir_info = opendir(argv[1]);
-        if (dir_info) {
-          int files_converted = 0;
-          int mods_found = 0;
-          DATAPACK *samples;
-          DATAPACK *patterns;
-          struct dirent *file_info;
+  DIR *dir_info;
+  dir_info = opendir(argv[1]);
+  if (!dir_info) {
+    printf("Unable to open directory %s...\n", argv[1]);
+    return 1;
+  }
 
-          samples = DATA_Create("AAS_SampleData");
-          patterns = DATA_Create("AAS_PatternData");
+  int files_converted = 0;
+  int mods_found = 0;
+  DATAPACK *samples;
+  DATAPACK *patterns;
+  struct dirent *file_info;
 
+  samples = DATA_Create("AAS_SampleData");
+  patterns = DATA_Create("AAS_PatternData");
+
+  fprintf(
+      out_file_h,
+      "#ifndef __AAS_DATA__\n#define __AAS_DATA__\n\n#include "
+      "\"AAS.h\"\n\n#if AAS_VERSION != 0x111\n#error AAS version does "
+      "not match Conv2AAS version\n#endif\n\nAAS_BEGIN_DECLS\n");
+
+  fprintf(out_file_s,
+          ".TEXT\n.SECTION .rodata\n.ALIGN\n.ARM\n\n.ALIGN\n.EXTERN "
+          "AAS_lib_v111\n.GLOBAL AAS_data_v111\nAAS_data_v111:\n.word "
+          "AAS_lib_v111\n");
+
+  do {
+    file_info = readdir(dir_info);
+    if (file_info) {
+      char temp[512];
+
+      strcpy(temp, argv[1]);
+      strcat(temp, "/");
+      strcat(temp, file_info->d_name);
+
+      if (String_EndsWithMOD(file_info->d_name)) {
+        ++files_converted;
+        printf("Adding MOD %s...", file_info->d_name);
+        MOD_ConvMod(out_file_h, samples, patterns, temp, mods_found);
+        // printf( "Done!\n" );
+        strcpy(temp, file_info->d_name);
+        *(temp + strlen(temp) - 4) = 0;
+        String_MakeSafe(temp);
+        fprintf(out_file_h, "\nextern const AAS_u8 AAS_DATA_MOD_%s;\n",
+                temp);
+        fprintf(out_file_s,
+                "\n.ALIGN\n.GLOBAL "
+                "AAS_DATA_MOD_%s\nAAS_DATA_MOD_%s:\n.byte %d\n",
+                temp, temp, mods_found);
+        ++mods_found;
+      } else if (String_EndsWithRAW(file_info->d_name)) {
+        int val;
+        ++files_converted;
+        printf("Adding RAW %s...", file_info->d_name);
+        val = RAW_LoadSound(temp, samples);
+        if (val >= 0) {
+          strcpy(temp, file_info->d_name);
+          *(temp + strlen(temp) - 4) = 0;
+          String_MakeSafe(temp);
           fprintf(
               out_file_h,
-              "#ifndef __AAS_DATA__\n#define __AAS_DATA__\n\n#include "
-              "\"AAS.h\"\n\n#if AAS_VERSION != 0x111\n#error AAS version does "
-              "not match Conv2AAS version\n#endif\n\nAAS_BEGIN_DECLS\n");
-
-          fprintf(out_file_s,
-                  ".TEXT\n.SECTION .rodata\n.ALIGN\n.ARM\n\n.ALIGN\n.EXTERN "
-                  "AAS_lib_v111\n.GLOBAL AAS_data_v111\nAAS_data_v111:\n.word "
-                  "AAS_lib_v111\n");
-
-          do {
-            file_info = readdir(dir_info);
-            if (file_info) {
-              char temp[512];
-
-              strcpy(temp, argv[1]);
-              strcat(temp, "/");
-              strcat(temp, file_info->d_name);
-
-              if (String_EndsWithMOD(file_info->d_name)) {
-                ++files_converted;
-                printf("Adding MOD %s...", file_info->d_name);
-                MOD_ConvMod(out_file_h, samples, patterns, temp, mods_found);
-                // printf( "Done!\n" );
-                strcpy(temp, file_info->d_name);
-                *(temp + strlen(temp) - 4) = 0;
-                String_MakeSafe(temp);
-                fprintf(out_file_h, "\nextern const AAS_u8 AAS_DATA_MOD_%s;\n",
-                        temp);
-                fprintf(out_file_s,
-                        "\n.ALIGN\n.GLOBAL "
-                        "AAS_DATA_MOD_%s\nAAS_DATA_MOD_%s:\n.byte %d\n",
-                        temp, temp, mods_found);
-                ++mods_found;
-              } else if (String_EndsWithRAW(file_info->d_name)) {
-                int val;
-                ++files_converted;
-                printf("Adding RAW %s...", file_info->d_name);
-                val = RAW_LoadSound(temp, samples);
-                if (val >= 0) {
-                  strcpy(temp, file_info->d_name);
-                  *(temp + strlen(temp) - 4) = 0;
-                  String_MakeSafe(temp);
-                  fprintf(
-                      out_file_h,
-                      "\nextern const AAS_s8* const AAS_DATA_SFX_START_%s;\n",
-                      temp);
-                  fprintf(out_file_s,
-                          "\n.ALIGN\n.GLOBAL "
-                          "AAS_DATA_SFX_START_%s\nAAS_DATA_SFX_START_%s:\n."
-                          "word AAS_SampleData + %d\n",
-                          temp, temp, val);
-                  fprintf(out_file_h,
-                          "\nextern const AAS_s8* const AAS_DATA_SFX_END_%s;\n",
-                          temp);
-                  fprintf(out_file_s,
-                          "\n.ALIGN\n.GLOBAL "
-                          "AAS_DATA_SFX_END_%s\nAAS_DATA_SFX_END_%s:\n.word "
-                          "AAS_SampleData + %d\n",
-                          temp, temp, val + last_samp_length);
-                }
-              } else if (String_EndsWithWAV(file_info->d_name)) {
-                int val;
-                ++files_converted;
-                printf("Adding WAV %s...", file_info->d_name);
-                val = WAV_LoadSound(temp, samples);
-                if (val >= 0) {
-                  strcpy(temp, file_info->d_name);
-                  *(temp + strlen(temp) - 4) = 0;
-                  String_MakeSafe(temp);
-                  fprintf(
-                      out_file_h,
-                      "\nextern const AAS_s8* const AAS_DATA_SFX_START_%s;\n",
-                      temp);
-                  fprintf(out_file_s,
-                          "\n.ALIGN\n.GLOBAL "
-                          "AAS_DATA_SFX_START_%s\nAAS_DATA_SFX_START_%s:\n."
-                          "word AAS_SampleData + %d\n",
-                          temp, temp, val);
-                  fprintf(out_file_h,
-                          "\nextern const AAS_s8* const AAS_DATA_SFX_END_%s;\n",
-                          temp);
-                  fprintf(out_file_s,
-                          "\n.ALIGN\n.GLOBAL "
-                          "AAS_DATA_SFX_END_%s\nAAS_DATA_SFX_END_%s:\n.word "
-                          "AAS_SampleData + %d\n",
-                          temp, temp, val + last_samp_length);
-                }
-              }
-            }
-          } while (file_info);
-
-          closedir(dir_info);
-
+              "\nextern const AAS_s8* const AAS_DATA_SFX_START_%s;\n",
+              temp);
           fprintf(out_file_s,
                   "\n.ALIGN\n.GLOBAL "
-                  "AAS_DATA_NUM_MODS\nAAS_DATA_NUM_MODS:\n.short %d\n",
-                  mods_found);
-
-          MOD_WriteSamples(out_file_s, mods_found);
-          MOD_WritePatterns(out_file_s, mods_found);
-          MOD_WriteNumChans(out_file_s, mods_found);
-          MOD_WriteSongRestartPos(out_file_s, mods_found);
-
-          // MOD_WritePeriodConvTable( out_file_h, 24002 );
-
-          DATA_Write(samples, out_file_s);
-          DATA_Write(patterns, out_file_s);
-
-          printf("\n");
-
-          fprintf(out_file_h, "\nAAS_END_DECLS\n\n#endif\n");
-        } else {
-          printf("Unable to open directory %s...\n", argv[1]);
+                  "AAS_DATA_SFX_START_%s\nAAS_DATA_SFX_START_%s:\n."
+                  "word AAS_SampleData + %d\n",
+                  temp, temp, val);
+          fprintf(out_file_h,
+                  "\nextern const AAS_s8* const AAS_DATA_SFX_END_%s;\n",
+                  temp);
+          fprintf(out_file_s,
+                  "\n.ALIGN\n.GLOBAL "
+                  "AAS_DATA_SFX_END_%s\nAAS_DATA_SFX_END_%s:\n.word "
+                  "AAS_SampleData + %d\n",
+                  temp, temp, val + last_samp_length);
         }
-
-        fclose(out_file_h);
-      } else {
-        printf("Unable to open AASData.h for writing...\n");
+      } else if (String_EndsWithWAV(file_info->d_name)) {
+        int val;
+        ++files_converted;
+        printf("Adding WAV %s...", file_info->d_name);
+        val = WAV_LoadSound(temp, samples);
+        if (val >= 0) {
+          strcpy(temp, file_info->d_name);
+          *(temp + strlen(temp) - 4) = 0;
+          String_MakeSafe(temp);
+          fprintf(
+              out_file_h,
+              "\nextern const AAS_s8* const AAS_DATA_SFX_START_%s;\n",
+              temp);
+          fprintf(out_file_s,
+                  "\n.ALIGN\n.GLOBAL "
+                  "AAS_DATA_SFX_START_%s\nAAS_DATA_SFX_START_%s:\n."
+                  "word AAS_SampleData + %d\n",
+                  temp, temp, val);
+          fprintf(out_file_h,
+                  "\nextern const AAS_s8* const AAS_DATA_SFX_END_%s;\n",
+                  temp);
+          fprintf(out_file_s,
+                  "\n.ALIGN\n.GLOBAL "
+                  "AAS_DATA_SFX_END_%s\nAAS_DATA_SFX_END_%s:\n.word "
+                  "AAS_SampleData + %d\n",
+                  temp, temp, val + last_samp_length);
+        }
       }
-
-      fclose(out_file_s);
-    } else {
-      printf("Unable to open AASData.s for writing...\n");
     }
-  }
+  } while (file_info);
+
+  closedir(dir_info);
+
+  fprintf(out_file_s,
+          "\n.ALIGN\n.GLOBAL "
+          "AAS_DATA_NUM_MODS\nAAS_DATA_NUM_MODS:\n.short %d\n",
+          mods_found);
+
+  MOD_WriteSamples(out_file_s, mods_found);
+  MOD_WritePatterns(out_file_s, mods_found);
+  MOD_WriteNumChans(out_file_s, mods_found);
+  MOD_WriteSongRestartPos(out_file_s, mods_found);
+
+  // MOD_WritePeriodConvTable( out_file_h, 24002 );
+
+  DATA_Write(samples, out_file_s);
+  DATA_Write(patterns, out_file_s);
+
+  printf("\n");
+
+  fprintf(out_file_h, "\nAAS_END_DECLS\n\n#endif\n");
+
+  fclose(out_file_h);
+  fclose(out_file_s);
 
   return 0;
 }
