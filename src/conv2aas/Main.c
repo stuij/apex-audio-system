@@ -800,41 +800,30 @@ static void MOD_WritePeriodConvTable( FILE* out_file, int mix_rate )
 static int last_samp_length = 0;
 
 static int RAW_LoadSound(const char *filename, DATAPACK *sfx) {
-  int data = -1;
   struct stat file_info;
-
-  if (stat(filename, &file_info) == 0) {
-    FILE *in_file;
-    int length;
-    length = file_info.st_size;
-
-    in_file = fopen(filename, "rb");
-    if (in_file) {
-      BYTE *samp = (BYTE *)malloc(length + 16);
-
-      // printf( "\nRAW_LoadSound( %s ): Reading...\n", filename );
-
-      last_samp_length = length;
-
-      fread(samp + 16, 1, length, in_file);
-      fclose(in_file);
-
-      memcpy(samp, samp + length, 16);
-
-      MISC_ProcessSound(samp, length + 16);
-
-      data = DATA_Append(sfx, samp, length + 16) + 16;
-
-      free(samp);
-
-      printf("Done!\n\n");
-    } else {
-      printf("\nRAW_LoadSound( %s ): Unable to open...\n", filename);
-    }
-  } else {
+  if (stat(filename, &file_info) != 0) {
     printf("\nRAW_LoadSound( %s ): Unable to open...\n", filename);
+    return -1;
+  }
+  int length = file_info.st_size;
+
+  FILE *in_file = fopen(filename, "rb");
+  if (!in_file) {
+    printf("\nRAW_LoadSound( %s ): Unable to open...\n", filename);
+    return -1;
   }
 
+  BYTE *samp = (BYTE *)malloc(length + 16);
+  last_samp_length = length;
+  fread(samp + 16, 1, length, in_file);
+  fclose(in_file);
+
+  memcpy(samp, samp + length, 16);
+  MISC_ProcessSound(samp, length + 16);
+  int data = DATA_Append(sfx, samp, length + 16) + 16;
+  free(samp);
+
+  printf("Done!\n\n");
   return data;
 }
 
