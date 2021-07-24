@@ -130,7 +130,7 @@ static int DATA_AppendAligned(DATAPACK *curr_data, unsigned char *data,
     };
 
     if (curr_data->chunk_data_length <= (MAX_DATA_LENGTH - length)) {
-      memcpy(curr_data->chunk_data + offset, data, length);
+      memmove(curr_data->chunk_data + offset, data, length);
       curr_data->chunk_data_length += length;
       ++curr_data->chunk_unique;
       return offset / block_length;
@@ -159,7 +159,7 @@ static int DATA_Append(DATAPACK *curr_data, unsigned char *data, int length) {
 
     if (curr_data->chunk_data_length <= (MAX_DATA_LENGTH - length)) {
       offset = curr_data->chunk_data_length;
-      memcpy_new(curr_data->chunk_data + offset, data, length);
+      memmove(curr_data->chunk_data + offset, data, length);
       curr_data->chunk_data_length += length;
       ++curr_data->chunk_unique;
       return offset;
@@ -256,8 +256,8 @@ static void MOD_LoadSound(struct ModSample *smp, FILE *in_file,
   if (truelen > 0) {
     memset(samp, 0, 16);
     if ((repeat < 65535) && (truelen > repeat))
-      memcpy(samp + (repeat << 1), samp + (truelen << 1),
-             16); // should really merge, also wasteful of memory
+      memmove(samp + (repeat << 1), samp + (truelen << 1),
+              16); // should really merge, also wasteful of memory
     MISC_ProcessSound(samp, (truelen << 1) + 16);
     data = DATA_Append(samples, samp, (truelen << 1) + 16);
     smp->data = data + 16;
@@ -816,7 +816,7 @@ static int RAW_LoadSound(const char *filename, DATAPACK *sfx) {
   fread(samp + 16, 1, length, in_file);
   fclose(in_file);
 
-  memcpy(samp, samp + length, 16);
+  memmove(samp, samp + length, 16);
   MISC_ProcessSound(samp, length + 16);
   int data = DATA_Append(sfx, samp, length + 16) + 16;
   free(samp);
@@ -933,7 +933,7 @@ static int WAV_LoadSound(const char *filename, DATAPACK *sfx) {
     BYTE *samp = (BYTE *)malloc(length + 16);
     last_samp_length = length;
     fread(samp + 16, 1, length, in_file);
-    memcpy(samp, samp + length, 16);
+    memmove(samp, samp + length, 16);
     MISC_ConvSoundToSigned((UBYTE *)samp, length + 16);
     MISC_ProcessSound(samp, length + 16);
     data = DATA_Append(sfx, samp, length + 16) + 16;
