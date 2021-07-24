@@ -100,7 +100,7 @@ static DATAPACK *DATA_Create(const char *name) {
     new_data->chunk_unique = 0;
     new_data->chunk_actual = 0;
   } else {
-    printf("DATA_Create( %s ): Failed (address:%p length:%d)...\n", name,
+    printf("DATA_Create( %s ): Failed (address:%p length:%)...\n", name,
            new_data, sizeof(DATAPACK));
   }
 
@@ -239,9 +239,9 @@ static void MISC_ProcessSound(BYTE *data, int length) {
 static void MISC_ConvSoundToSigned(UBYTE *data, int length) {
   BYTE *bdata = (BYTE *)data;
   for (; length > 0; --length) {
-    int val = *data;
-    val -= 128;
-    *bdata++ = val;
+    int val_s = *data;
+    int val_u = val_s - 128;
+    *bdata++ = val_u;
   }
 }
 
@@ -250,7 +250,6 @@ static void MOD_LoadSound(struct ModSample *smp, FILE *in_file,
                           int repeat) {
   BYTE *samp = (BYTE *)malloc((length << 1) + 16);
   int data;
-  UWORD temp;
 
   fread(samp + 16, (length << 1), 1, in_file);
 
@@ -496,10 +495,8 @@ static void MOD_ConvMod(FILE *out_file, DATAPACK *samples, DATAPACK *patterns,
     UBYTE song_length, last_pattern;
     UBYTE song_data[128];
     int pat[64][16];
-    ULONG *curr_note;
     UWORD tmp_uword;
     UBYTE tmp_ubyte;
-    BYTE tmp_byte;
     ULONG notes_temp[16][64];
     int effect_count[32] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
@@ -525,14 +522,15 @@ static void MOD_ConvMod(FILE *out_file, DATAPACK *samples, DATAPACK *patterns,
       //	tmp_ubyte += 8;
       samps_temp[i].finetune = tmp_ubyte;
       if (tmp_ubyte > 15)
-        printf("MOD_ConvMod( %s ): Error: finetune > 15...\n", filename,
-               tmp_ubyte);
+        printf("MOD_ConvMod( %s ): Error: finetune %u  > 15...\n",
+               filename, tmp_ubyte);
 
       fread(&tmp_ubyte, 1, 1, in_file); // volume
       samps_temp[i].volume = tmp_ubyte;
 
       if (tmp_ubyte > 64) {
-        printf("Failed! Reason: Sample vol > 64\n", filename, tmp_ubyte);
+        printf("MOD_ConvMod( %s ): Error: sample vol %u > 64\n",
+               filename, tmp_ubyte);
         return;
       }
 
@@ -579,7 +577,7 @@ static void MOD_ConvMod(FILE *out_file, DATAPACK *samples, DATAPACK *patterns,
     if (num_chans <= 0) {
       switch (num_chans) {
       case -2: // Unsupported MOD type
-        printf("Failed! Reason: Unsupported MOD type (%p)\n", new_temp);
+        printf("Failed! Reason: Unsupported MOD type (%u)\n", new_temp);
         break;
 
       case -3: // Too many channels
@@ -587,7 +585,7 @@ static void MOD_ConvMod(FILE *out_file, DATAPACK *samples, DATAPACK *patterns,
         break;
 
       default: // Unrecognised MOD type
-        printf("Failed! Reason: Unrecognised MOD type (%p)\n", new_temp);
+        printf("Failed! Reason: Unrecognised MOD type (%u)\n", new_temp);
         break;
       }
       return;
@@ -601,7 +599,6 @@ static void MOD_ConvMod(FILE *out_file, DATAPACK *samples, DATAPACK *patterns,
     }
 
     for (i = 0; i <= last_pattern; ++i) {
-      // curr_note = &notes_temp[0][0];
       for (line = 0; line < 64; ++line) {
         for (chan = 0; chan < num_chans; ++chan) {
           UBYTE byte1, byte2, byte3, byte4;
@@ -883,9 +880,7 @@ static BOOL WAV_CheckHeaders(FILE* in_file, const char *filename) {
 }
 
 static int WAV_LoadSound(const char *filename, DATAPACK *sfx) {
-
   FILE *in_file;
-
   in_file = fopen(filename, "rb");
   if (!in_file) {
     printf("\nWAV_LoadSound( %s ): Failed: Unable to open...\n", filename);
