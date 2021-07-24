@@ -838,131 +838,128 @@ static int RAW_LoadSound(const char *filename, DATAPACK *sfx) {
   return data;
 }
 
-static int WAV_LoadSound(const char *filename, DATAPACK *sfx) {
-  int data = -1;
-  FILE *in_file;
-
-  last_samp_length = 0;
-
-  in_file = fopen(filename, "rb");
-  if (in_file) {
-    ULONG tmp;
-
-    fread(&tmp, 4, 1, in_file);
-
-    if (tmp == 0x46464952) { // "RIFF"
-      fread(&tmp, 4, 1, in_file);
-      fread(&tmp, 4, 1, in_file);
-
-      if (tmp == 0x45564157) { // "WAVE"
-        fread(&tmp, 4, 1, in_file);
-
-        if (tmp == 0x20746d66) { // "fmt "
-          unsigned short format;
-
-          fread(&tmp, 4, 1, in_file);
-          fread(&format, 2, 1, in_file);
-
-          if (format == 1) { // PCM format
-            unsigned short channels;
-
-            fread(&channels, 2, 1, in_file);
-
-            if (channels == 1) { // mono
-              unsigned short bits_per_sample;
-
-              fread(&tmp, 4, 1, in_file); // sample rate in hz
-              fread(&tmp, 4, 1, in_file);
-              fread(&tmp, 2, 1, in_file);
-              fread(&bits_per_sample, 2, 1, in_file);
-
-              if (bits_per_sample == 8) {
-                int ret, length;
-                BOOL done;
-
-                done = FALSE;
-                length = 0;
-
-                do {
-                  ret = fread(&tmp, 4, 1, in_file);
-
-                  if (ret == 1) {
-                    if (tmp == 0x61746164) { // "data"
-                      ret = fread(&length, 4, 1, in_file);
-
-                      if (ret == 1) {
-                        if (length > 0) {
-                          done = TRUE;
-                        }
-                      } else {
-                        done = TRUE;
-                      }
-                    } else {
-                      int size;
-
-                      ret = fread(&size, 4, 1, in_file);
-
-                      if (ret == 1) {
-                        fseek(in_file, size, SEEK_CUR);
-                      } else {
-                        done = TRUE;
-                      }
-                    }
-                  } else {
-                    done = TRUE;
-                  }
-                } while (!done);
-
-                if (length > 0) {
-                  BYTE *samp = (BYTE *)malloc(length + 16);
-
-                  last_samp_length = length;
-
-                  fread(samp + 16, 1, length, in_file);
-
-                  memcpy(samp, samp + length, 16);
-
-                  MISC_ConvSoundToSigned((UBYTE *)samp, length + 16);
-
-                  MISC_ProcessSound(samp, length + 16);
-
-                  data = DATA_Append(sfx, samp, length + 16) + 16;
-
-                  free(samp);
-
-                  printf("Done!\n\n");
-                } else {
-                  printf("Failed: Unable to find valid data subchunk...\n",
-                         filename);
-                }
-              } else {
-                printf("\nWAV_LoadSound( %s ): Failed: Not 8 bit...\n",
-                       filename);
-              }
-            } else {
-              printf("\nWAV_LoadSound( %s ): Failed: Not mono...\n", filename);
-            }
-          } else {
-            printf("\nWAV_LoadSound( %s ): Failed: Not in PCM format...\n",
-                   filename);
-          }
-        } else {
-          printf("\nWAV_LoadSound( %s ): Failed: Missing fmt subchunk...\n",
-                 filename);
-        }
-      } else {
-        printf("\nWAV_LoadSound( %s ): Failed: Not a WAVE file...\n", filename);
-      }
-    } else {
-      printf("\nWAV_LoadSound( %s ): Failed: RIFF header missing...\n",
-             filename);
-    }
-
-    fclose(in_file);
-  } else {
-    printf("\nWAV_LoadSound( %s ): Failed: Unable to open...\n", filename);
+static BOOL WAV_CheckHeaders(FILE* in_file, const char *filename) {
+  ULONG tmp;
+  fread(&tmp, 4, 1, in_file);
+  if (tmp != 0x46464952) {
+    printf("\nWAV_LoadSound( %s ): Failed: RIFF header missing...\n",
+           filename);
+    return FALSE;
   }
 
+  fread(&tmp, 4, 1, in_file);
+  fread(&tmp, 4, 1, in_file);
+  if (tmp != 0x45564157) {
+    printf("\nWAV_LoadSound( %s ): Failed: Not a WAVE file...\n", filename);
+    return FALSE;
+  }
+
+  fread(&tmp, 4, 1, in_file);
+  if (tmp != 0x20746d66) {
+    printf("\nWAV_LoadSound( %s ): Failed: Missing fmt subchunk...\n",
+           filename);
+    return FALSE;
+  }
+
+  unsigned short format;
+  fread(&tmp, 4, 1, in_file);
+  fread(&format, 2, 1, in_file);
+  if (format != 1) { // PCM format
+    printf("\nWAV_LoadSound( %s ): Failed: Not in PCM format...\n",
+           filename);
+    return FALSE;
+  }
+
+  unsigned short channels;
+  fread(&channels, 2, 1, in_file);
+  if (channels != 1) { // mono
+    printf("\nWAV_LoadSound( %s ): Failed: Not mono...\n", filename);
+    return FALSE;
+  }
+
+  unsigned short bits_per_sample;
+  fread(&tmp, 4, 1, in_file); // sample rate in hz
+  fread(&tmp, 4, 1, in_file);
+  fread(&tmp, 2, 1, in_file);
+  fread(&bits_per_sample, 2, 1, in_file);
+
+  if (bits_per_sample != 8) {
+    printf("\nWAV_LoadSound( %s ): Failed: Not 8 bit...\n",
+           filename);
+    return FALSE;
+  }
+
+  return TRUE;
+}
+
+static int WAV_LoadSound(const char *filename, DATAPACK *sfx) {
+
+  FILE *in_file;
+
+  in_file = fopen(filename, "rb");
+  if (!in_file) {
+    printf("\nWAV_LoadSound( %s ): Failed: Unable to open...\n", filename);
+    return -1;
+  }
+
+  if (!WAV_CheckHeaders(in_file, filename)) {
+    // we've already shown an error message when checking headers
+    return -1;
+  }
+
+  ULONG tmp;
+  int ret, length;
+  BOOL done = FALSE;
+
+  int data = -1;
+  last_samp_length = 0;
+  length = 0;
+
+  do {
+    ret = fread(&tmp, 4, 1, in_file);
+
+    if (ret == 1) {
+      if (tmp == 0x61746164) { // "data"
+        ret = fread(&length, 4, 1, in_file);
+
+        if (ret == 1) {
+          if (length > 0) {
+            done = TRUE;
+          }
+        } else {
+          done = TRUE;
+        }
+      } else {
+        int size;
+        ret = fread(&size, 4, 1, in_file);
+
+        if (ret == 1) {
+          fseek(in_file, size, SEEK_CUR);
+        } else {
+          done = TRUE;
+        }
+      }
+    } else {
+      done = TRUE;
+    }
+  } while (!done);
+
+  if (length > 0) {
+    BYTE *samp = (BYTE *)malloc(length + 16);
+    last_samp_length = length;
+    fread(samp + 16, 1, length, in_file);
+    memcpy(samp, samp + length, 16);
+    MISC_ConvSoundToSigned((UBYTE *)samp, length + 16);
+    MISC_ProcessSound(samp, length + 16);
+    data = DATA_Append(sfx, samp, length + 16) + 16;
+    free(samp);
+    printf("Done!\n\n");
+  } else {
+    printf("\nWAV_LoadSound( %s ): Unable to find valid data subchunk...\n",
+           filename);
+  }
+
+  fclose(in_file);
   return data;
 }
 
