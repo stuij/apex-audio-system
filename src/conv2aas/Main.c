@@ -9,17 +9,18 @@
 //  + All functions declared static to work around problem with GCC
 
 #include <dirent.h>
+#include <inttypes.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
 
-#define BYTE signed char
-#define UBYTE unsigned char
-#define BOOL unsigned char
-#define UWORD unsigned short
-#define ULONG unsigned int
-#define WORD signed short
+#define BYTE int8_t
+#define UBYTE uint8_t
+#define BOOL int8_t
+#define WORD int16_t
+#define UWORD uint16_t
+#define ULONG uint32_t
 #define TRUE 1
 #define FALSE 0
 
