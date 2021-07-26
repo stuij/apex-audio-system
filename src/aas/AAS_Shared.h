@@ -79,4 +79,11 @@ __inline static int AAS_Min(int a, int b) {
     return b;
 }
 
+void AAS_MOD_Interrupt();
+
+// fns defined in assembly
+void AAS_MixAudio_SetMode_Normal();
+void AAS_MixAudio_SetMode_Boost();
+void AAS_MixAudio_SetMode_BoostAndClip();
+
 #endif
