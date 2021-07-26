@@ -19,7 +19,7 @@
 
 AAS_BEGIN_DECLS
 
-#define AAS_VERSION 0x111  // v1.11
+#define AAS_VERSION 0x113  // v1.13
 
 // Types
 #define AAS_u32 unsigned int

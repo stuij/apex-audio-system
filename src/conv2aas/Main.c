@@ -1029,7 +1029,7 @@ int main(int argc, char *argv[]) {
 
   printf("\n");
   printf("/---------------------------------------------\\\n");
-  printf("| Conv2AAS v1.11        WAV, RAW & MOD -> AAS |\n");
+  printf("| Conv2AAS v1.13        WAV, RAW & MOD -> AAS |\n");
   printf("| Copyright (c) 2005, Apex Designs            |\n");
   printf("\\---------------------------------------------/\n\n");
 
@@ -1075,13 +1075,13 @@ int main(int argc, char *argv[]) {
   fprintf(
       out_file_h,
       "#ifndef __AAS_DATA__\n#define __AAS_DATA__\n\n#include "
-      "\"AAS.h\"\n\n#if AAS_VERSION != 0x111\n#error AAS version does "
+      "\"AAS.h\"\n\n#if AAS_VERSION != 0x113\n#error AAS version does "
       "not match Conv2AAS version\n#endif\n\nAAS_BEGIN_DECLS\n");
 
   fprintf(out_file_s,
           ".TEXT\n.SECTION .rodata\n.ALIGN\n.ARM\n\n.ALIGN\n.EXTERN "
-          "AAS_lib_v111\n.GLOBAL AAS_data_v111\nAAS_data_v111:\n.word "
-          "AAS_lib_v111\n");
+          "AAS_lib_v113\n.GLOBAL AAS_data_v113\nAAS_data_v113:\n.word "
+          "AAS_lib_v113\n");
 
   do {
     file_info = readdir(dir_info);

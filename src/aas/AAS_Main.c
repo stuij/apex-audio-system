@@ -4,8 +4,8 @@
 
 #include "AAS_Shared.h"
 
-extern const int AAS_data_v111;
-int AAS_lib_v111 AAS_IN_EWRAM;
+extern const int AAS_data_v113;
+int AAS_lib_v113 AAS_IN_EWRAM;
 
 static AAS_BOOL AAS_da_active AAS_IN_EWRAM;
 static AAS_BOOL AAS_db_active AAS_IN_EWRAM;
@@ -162,7 +162,7 @@ static void AAS_DoConfig(int mix_rate, int volscale, AAS_BOOL stereo,
   REG_TM1D = 0x10000 - (mix_rate << 4);
   REG_TM1CNT = 0xC4; // enable timer1 + irq and cascade from timer 0
 
-  AAS_lib_v111 = AAS_data_v111;
+  AAS_lib_v113 = AAS_data_v113;
 }
 
 int AAS_SetConfig(int config_mix, int config_chans, int config_spatial,
