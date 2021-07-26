@@ -237,11 +237,10 @@ static void MISC_ProcessSound(BYTE *data, int length) {
 }
 
 static void MISC_ConvSoundToSigned(UBYTE *data, int length) {
-  BYTE *bdata = (BYTE *)data;
   for (; length > 0; --length) {
-    int val_s = *data;
-    int val_u = val_s - 128;
-    *bdata++ = val_u;
+    BYTE val_s = *data;
+    BYTE val_u = val_s - 128;
+    *data++ = val_u;
   }
 }
 
