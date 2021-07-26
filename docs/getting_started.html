@@ -42,6 +42,8 @@ pre {font-family: monospace}
 <br><font size=+1 color="#333377">:: Building AAS components</font>
 <blockquote>
 
+<p>Note that if you downloaded an AAS release, the needed library, examples and conv2aas program are already present in the &lsaquo;root&rsaquo;/<b>build</b> directory.</p>
+
 <p>We use a makefile in the root of the repo to build the library, conversion tool and examples. It is expected that you have a cross-compiler and a host compiler installed on your system. The paths to these need to be configured at the top of the makefile:</p>
 <ul>
 <li><b>$(CROSS)</b>: The directory path and prefix of the cross-compilation tools. For example, if you have installed devkitPro to the default location, and the tools aren't visible in your <b>PATH</b>, the line would be:
@@ -52,6 +54,11 @@ pre {font-family: monospace}
 <li><b>$(PREFIX)</b>: The directory path and prefix of the host compiler. This can normally be left as is, but for example it could have been installed in user/local:
   <ul>
   <li><tt>export PREFIX = /usr/local/</tt></li>
+  </ul>
+</li>
+<li><b>$(TOOLS)</b>: The directory path to common gba tools. Specifically we need to find gbafix in this directory. If you installed devkitpro, which includes gbafix, the line would be:
+  <ul>
+  <li><tt>export TOOLS = /opt/devkitpro/tools/bin/</tt></li>
   </ul>
 </li>
 </ul>
@@ -100,7 +107,7 @@ pre {font-family: monospace}
 <br><font size=+1 color="#333377">:: First Steps</font>
 <blockquote>
 
-<p>Once the library and conv2aas are built, the user must include the AAS header files ("AAS.h" and, optionally, "AAS_Mixer.h") and link "libAAS.a" with their project. Next, the interrupt handling routines must be set up so that a Timer 1 interrupt results in a call to <a href="api_general.html#AAS_Timer1InterruptHandler">AAS_Timer1InterruptHandler</a> (or <a href="api_general.html#AAS_FastTimer1InterruptHandler">AAS_FastTimer1InterruptHandler</a> with a seperate call to <a href="api_general.html#AAS_DoWork">AAS_DoWork</a> later if "AAS_MultipleInterrupts" are being used). The <a href="example.html">example code</a> included with AAS demonstrates how to do this, and users are encouraged to reuse the code shown in their own projects.</p>
+<p>Once the library and conv2aas are built, the user must include the AAS header files ("AAS.h" and, optionally, "AAS_Mixer.h") and link "libAAS.a" with their project. Next, the interrupt handling routines must be set up so that a Timer 1 interrupt results in a call to <a href="api_general.html#AAS_Timer1InterruptHandler">AAS_Timer1InterruptHandler</a> (or <a href="api_general.html#AAS_FastTimer1InterruptHandler">AAS_FastTimer1InterruptHandler</a> with a seperate call to <a href="api_general.html#AAS_DoWork">AAS_DoWork</a> later if "AAS_MultipleInterrupts" are being used). The <a href="example.html">example code section</a> in this documentation, and the code included with AAS demonstrates how to do this, and users are encouraged to reuse the code shown in their own projects.</p>
 
 <p>It is also recommended that the project's makefile be modified so that <a href="conv2aas.html">Conv2AAS</a> is automatically called when the project is compiled, and its output is assembled and linked with the main code. The makefile included with the <a href="example.html">example code</a> shows how to do this.</p>
 
