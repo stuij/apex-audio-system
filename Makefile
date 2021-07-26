@@ -3,6 +3,11 @@
 # /opt/devkitpro/devkitARM/bin/arm-none-eabi-
 export CROSS = arm-none-eabi-
 
+# gba tools helpers directory that includes gbafix
+# For example, if you use devkitpro, the default path is:
+# /opt/devkitpro/tools/bin/
+export TOOLS = 
+
 # compiler tools prefix used by makefiles for conv2aas executable
 # for example, the empty prefix below will use the system gcc tools
 export PREFIX = 

@@ -5,4 +5,7 @@ SHORTNAME = $(EXAMPLE2_PREFIX)
 CROSS ?= arm-none-eabi-
 LD = $(CROSS)gcc
 
+TOOLS ?= 
+PREFIX ?= 
+
 include ../../make/example.make
