@@ -22,7 +22,7 @@ sources to the community, hence this Git repo.
 
 ## Latest release
 
-The current release is v1.12. See the documentation for a list of changes.
+The current release is v1.13. See the documentation for a list of changes.
 
 
 ## Contact
