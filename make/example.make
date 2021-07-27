@@ -33,7 +33,7 @@ $(TMPNAME): $(IWRAM) $(GFX) $(SOUND) $(SRC)
 
 $(TARGET): $(TMPNAME)
 	$(CROSS)objcopy -v -O binary $< $@
-	$(tools)gbafix $@
+	$(TOOLS)gbafix $@
 
 clean:
 	rm -f *.o AAS_Data.h AAS_Data.s $(TARGET) $(TMPNAME) $(GFX) $(SOUND) $(SYMBOLS) $(MAP)
