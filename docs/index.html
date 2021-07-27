@@ -64,31 +64,6 @@ pre {font-family: monospace}
 </table>
 
 </blockquote>
-<br><font size=+1 color="#333377">:: History</font>
-<blockquote>
-
-<p>Apex Audio System was made by James Daniels of Apex Systems back in 2003 for his GBA game Payback. The library underwent several revisions, the latest of which was v1.11. At the beginning of 2021, James was so kind to donate the sources to the community.</p>
-
-<p>The current release is v1.13.</p>
-
-<p>Changes in v1.13:</p>
-<ul>
-<li>fixed bug in conv2aas which broke converting wav files to the internal format</li>
-<li>modernized and simplified interrupt handling code in examples by basing them on libtonc interrupt routines</li>
-<li>minor cleanup of licensing messages</li>
-<li>updated documentation</li>
-</ul>
-
-<p>Changes in v1.12:</p>
-<ul>
-<li>AAS is now open source under a MIT license and is hosted on Github</li>
-<li>code was updated to work with current devkitPro</li>
-<li>examples and code are driven by toplevel makefile</li>
-<li>library and example roms are to be found under &lsaquo;root&rsaquo;/<b>build</b></li>
-<li>updated documentation</li>
-</ul>
-
-</blockquote>
 <br><font size=+1 color="#333377">:: How Fast Is It?</font>
 <blockquote>
 
@@ -135,14 +110,6 @@ pre {font-family: monospace}
 </table>
 
 </blockquote>
-<br><font size=+1 color="#333377">:: Licensing</font>
-<blockquote>
-
-<p>AAS is now distributed under the MIT license. For licensing terms, see the LICENSE file in the root of this repo or go to http://opensource.org/licenses/MIT</p>
-
-<p>James only had one request when handing over the sources: that users of the library include a credit to Apex Designs. In essence this is now covered by the MIT license. It's up to you how you want to fill this in, but please be respectful of this requirement.</p>
-
-</blockquote>
 <br><font size=+1 color="#333377">:: Contact</font>
 <blockquote>
 
@@ -151,6 +118,44 @@ pre {font-family: monospace}
 <p>Pull requests are welcome, as are forks of course. If you want to report issues, open an issue on the Github project issue tracker.</p>
 
 <p>For a more realtime interactive experience, join <b>gbadev</b> on Discord. There's a good chance there's one or two people there that have used AAS before.</p>
+
+</blockquote>
+<br><font size=+1 color="#333377">:: History</font>
+<blockquote>
+
+<p>Apex Audio System was made by James Daniels of Apex Systems back in 2003 for his GBA game Payback. Until about 2008, the library underwent several revisions, the latest of which was v1.11. At the beginning of 2021, James was so kind to donate the sources to the community. AAS has since been updated to be used with the lastest devkitArm release.</p>
+
+<p>The current release is v1.13.</p>
+
+<p>Changes in v1.13:</p>
+<ul>
+<li>fixed bug in conv2aas which broke converting wav files to the internal format
+<li>because of above fix, playing the ambulance wav sound in the examples will now work correctly</li>
+<li>modernized and simplified interrupt handling code in examples by basing them on libtonc interrupt routines</li>
+<li>added $TOOLS var at top of top-level Makefile to resolve GBA tools folder to find gbafix</li>
+<li>minor cleanup of licensing messages</li>
+<li>updated documentation</li>
+<li>the release package now also includes the source</li>
+<li>in the release package moved library code+headers, example GBA binaries and conv2aas for both Linux and Windows to the build folder</li>
+<li>cleaned up code a bit to squash error messages, make the code more readable and to fix obvious issues</li>
+</ul>
+
+<p>Changes in v1.12:</p>
+<ul>
+<li>AAS is now open source under a MIT license and is hosted on Github</li>
+<li>code was updated to work with current devkitPro</li>
+<li>examples and code are driven by toplevel makefile</li>
+<li>library and example roms are to be found under &lsaquo;root&rsaquo;/<b>build</b></li>
+<li>updated documentation</li>
+</ul>
+
+</blockquote>
+<br><font size=+1 color="#333377">:: Licensing</font>
+<blockquote>
+
+<p>AAS is now distributed under the MIT license. For licensing terms, see the LICENSE file in the root of this repo or go to http://opensource.org/licenses/MIT</p>
+
+<p>James only had one request when handing over the sources: that users of the library include a credit to Apex Designs. In essence this is now covered by the MIT license. It's up to you how you want to fill this in, but please be respectful of this requirement.</p>
 
 </blockquote>
 

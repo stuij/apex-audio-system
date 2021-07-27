@@ -42,9 +42,9 @@ pre {font-family: monospace}
 <br><font size=+1 color="#333377">:: Building AAS components</font>
 <blockquote>
 
-<p>Note that if you downloaded an AAS release, the needed library, examples and conv2aas program are already present in the &lsaquo;root&rsaquo;/<b>build</b> directory.</p>
+<p>Note that if you downloaded the AAS release package, the needed library, examples and conv2aas program for both Linux and Windows are already present in the &lsaquo;root&rsaquo;/<b>build</b> directory.</p>
 
-<p>We use a makefile in the root of the repo to build the library, conversion tool and examples. It is expected that you have a cross-compiler and a host compiler installed on your system. The paths to these need to be configured at the top of the makefile:</p>
+<p>We use a makefile in the root of the repo to build the library, conversion tool and examples. It is expected that you have a cross-compiler and a host compiler installed on your system. The paths to these need to be configured at the top of the makefile (for PREFIX and TOOLS, don't forget suffix slash forward..):</p>
 <ul>
 <li><b>$(CROSS)</b>: The directory path and prefix of the cross-compilation tools. For example, if you have installed devkitPro to the default location, and the tools aren't visible in your <b>PATH</b>, the line would be:
   <ul>
