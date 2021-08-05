@@ -1,0 +1,12 @@
+html, body {
+  margin: 0 auto;
+  padding: 4px;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+@media all and (min-width:800px) {
+    html, body {
+      width: 800px;
+    }
+}

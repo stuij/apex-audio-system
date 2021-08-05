@@ -9,7 +9,9 @@ WAV or *tracker 1-16 channel MOD files as input.
 ## Documentation
 
 AAS is fairly well documented. From building the library to a starter guide to
-an extensive description of the api. See <root>/docs/index.html
+an extensive description of the api. See the [online
+documentation](https://stuij.github.io/apex-audio-system) or the pages in the
+repo at `<root>/docs/index.html`.
 
 
 ## History
