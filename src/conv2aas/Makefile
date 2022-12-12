@@ -5,11 +5,11 @@
 # got a hard time deleting this historic remnant)
 
 # Tools and flags.
-PREFIX ?=
-CC = $(PREFIX)gcc
+HOST_PREFIX ?=
+HOST_CC = $(HOST_PREFIX)gcc
 CFLAGS = -O3
 
-LD = $(PREFIX)gcc
+HOST_LD = $(HOST_PREFIX)gcc
 LDFLAGS =
 
 # Name of output targets.
@@ -32,8 +32,8 @@ clean:
 	rm -f *.o $(TARGET) $(GFX) $(SOUND) $(SYMBOLS) $(MAP)
 
 %.o: %.c
-	$(CC) $(INCLUDES) $(CFLAGS) -c $< -o $@
+	$(HOST_CC) $(INCLUDES) $(CFLAGS) -c $< -o $@
 
 $(TARGET): $(SRC)
-	$(LD) $(LDFLAGS) -o $@ $(SRC) $(LIBS)
-	$(PREFIX)size $@
+	$(HOST_LD) $(LDFLAGS) -o $@ $(SRC) $(LIBS)
+	$(HOST_PREFIX)size $@
