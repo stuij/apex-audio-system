@@ -20,8 +20,6 @@
 
 .GLOBAL _AAS_vol_lookup
 
-.equ merge_clip_difference, (_ma_merge_clip_end-_ma_merge_clip_start)/4
-
 
 @ Volume lookup table. -1 means use multiply, 0 to 7 means use bit shift.
 
