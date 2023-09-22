@@ -2,8 +2,9 @@
 @ Distributed under the MIT License
 @ license terms: see LICENSE file in root or http://opensource.org/licenses/MIT
 
-.TEXT
-.SECTION    .iwram,"ax",%progbits
+.syntax unified
+.text
+.section    .iwram,"ax",%progbits
 .ALIGN
 .ARM
 
@@ -533,7 +534,7 @@ ma_chan_all_zeroes:  @ very rare - only happens if last active channel finished 
 	adr r2,_ma_empty
 	mov r6,#0x04000000
 	add r6,r6,#0xd4
-	stmneia r6,{r2,r4,r5}  @ r5(_ma_to_go) can be 0 sometimes
+	stmiane r6,{r2,r4,r5}  @ r5(_ma_to_go) can be 0 sometimes
 	b ma_chan_finished
 	
 

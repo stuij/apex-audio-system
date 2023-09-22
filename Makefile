@@ -1,16 +1,25 @@
-# compiler tools prefix used by makefiles for gba executables
-# for example, to set to absolute devkitpro path, set to:
-# /opt/devkitpro/devkitARM/bin/arm-none-eabi-
-export CROSS = arm-none-eabi-
+# comment out to compile with GCC
+# export COMPILE_WITH_LLVM=1
 
-# gba tools helpers directory that includes gbafix
-# For example, if you use devkitpro, the default path is:
-# /opt/devkitpro/tools/bin/
-export TOOLS = 
+ifdef COMPILE_WITH_LLVM
+	ifeq ($(strip $(GBA_LLVM)),)
+		$(error Please set GBA_LLVM in your environment. export GBA_LLVM=<path to gba-llvm installation>)
+	endif
 
-# compiler tools prefix used by makefiles for conv2aas executable
-# for example, the empty prefix below will use the system gcc tools
-export PREFIX = 
+    # gba tools helpers directory that includes gbafix
+    # For example, if you use devkitpro, the default path is:
+    # /opt/devkitpro/tools/bin/
+	export TOOLS = $(GBA_LLVM)/bin/
+
+    # compiler tools prefix used by makefiles for conv2aas executable
+    # for example, the empty prefix below will use the system gcc tools
+    export PREFIX = 
+else
+    # GCC based toolchain
+	export CROSS = arm-none-eabi-
+	export TOOLS = 
+	export PREFIX = 
+endif
 
 # example names
 export EXAMPLE_PREFIX=AASExample

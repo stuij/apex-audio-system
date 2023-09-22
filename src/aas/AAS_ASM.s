@@ -2,8 +2,9 @@
 @ Distributed under the MIT License
 @ license terms: see LICENSE file in root or http://opensource.org/licenses/MIT
 
-.TEXT
-.SECTION    .text,"ax",%progbits
+.syntax unified
+.text
+.section    .text,"ax",%progbits
 .ALIGN
 .ARM
 
@@ -18,6 +19,8 @@
 .GLOBAL AAS_MixAudio_SetMaxChans_8
 
 .GLOBAL _AAS_vol_lookup
+
+.equ merge_clip_difference, (_ma_merge_clip_end-_ma_merge_clip_start)/4
 
 
 @ Volume lookup table. -1 means use multiply, 0 to 7 means use bit shift.
@@ -213,7 +216,7 @@ add r0,pc,#0x23c  @ adr r0,ma_again
 AAS_MixAudio_SetMode_BoostAndClip:
 	adr r12,_ma_clip
 	adr r0,_ma_merge_clip_start
-	mov r2,#((_ma_merge_clip_end-_ma_merge_clip_start)/4)
+	movs r2, #(_ma_merge_clip_end-_ma_merge_clip_start)/4
 
 do_mods:
 	ldr r1,=_AAS_MixAudio_mod4
@@ -234,14 +237,14 @@ do_mods:
 AAS_MixAudio_SetMode_Normal:
 	adr r12,_ma_noclip
 	adr r0,_ma_merge_noclip_start
-	mov r2,#((_ma_merge_noclip_end-_ma_merge_noclip_start)/4)
+	movs r2,#((_ma_merge_noclip_end-_ma_merge_noclip_start)/4)
 	b do_mods
 	
 	
 AAS_MixAudio_SetMode_Boost:
 	adr r12,_ma_noclip
 	adr r0,_ma_merge_boostnoclip_start
-	mov r2,#((_ma_merge_boostnoclip_end-_ma_merge_boostnoclip_start)/4)
+	movs r2,#((_ma_merge_boostnoclip_end-_ma_merge_boostnoclip_start)/4)
 	b do_mods
 	
 

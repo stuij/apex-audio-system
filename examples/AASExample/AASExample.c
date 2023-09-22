@@ -12,7 +12,7 @@
 #define REG_KEY_A 0x0001
 #define REG_KEY_B 0x0002
 
-void main() {
+int main() {
   int keys, keys_changed;
   int prev_keys = 0;
 
@@ -53,4 +53,6 @@ void main() {
       AAS_SFX_Play(1, 64, 8000, AAS_DATA_SFX_START_Boom, AAS_DATA_SFX_END_Boom,
                    AAS_NULL);
   } while (1);
+
+  return 0;
 }

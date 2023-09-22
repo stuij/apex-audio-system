@@ -1,12 +1,25 @@
-# Library and include paths.
-LIBS = -L../../build/aas/lib -lAAS -L$(DEVKITARM)/../libtonc/lib -ltonc
-INCLUDES = -I../../build/aas/include -I$(DEVKITARM)/../libtonc/include
+ifdef COMPILE_WITH_LLVM
+	ifeq ($(strip $(GBA_LLVM)),)
+		$(error Please set GBA_LLVM in your environment. export GBA_LLVM=<path to gba-llvm installation>)
+	endif
+
+    # Library and include paths.
+	LIBS = -L../../build/aas/lib -lAAS -ltonc
+	INCLUDES = -I../../build/aas/include
+
+	LDFLAGS = -Wl,-Map,$(MAP) --config armv4t-gba.cfg -Wl,-T,gba_cart.ld
+else
+    # Library and include paths.
+	LIBS = -L../../build/aas/lib -lAAS -L$(DEVKITARM)/../libtonc/lib -ltonc
+	INCLUDES = -I../../build/aas/include -I$(DEVKITARM)/../libtonc/include
+
+	LDFLAGS = -Wl,-Map,$(MAP) -specs=gba.specs
+endif
 
 # Files you want to go in ROM (AAS_Data.o must go first)
 SRC =	AAS_Data.o AASExample.o
 
 MAP = map.out
-LDFLAGS = -Wl,-Map,$(MAP) -specs=gba.specs
 
 # Name of output targets.
 TMPNAME = $(SHORTNAME).tmp
@@ -29,10 +42,10 @@ AAS_Data.o:
 $(TMPNAME): $(IWRAM) $(GFX) $(SOUND) $(SRC)
 	touch $(MAP)
 	$(LD) $(LDFLAGS) -o $@ $(SRC) $(IWRAM) $(GFX) $(SOUND) $(LIBS)
-	$(CROSS)size $@
+	$(SIZE) $@
 
 $(TARGET): $(TMPNAME)
-	$(CROSS)objcopy -v -O binary $< $@
+	$(OBJCOPY) -O binary $< $@
 	$(TOOLS)gbafix $@
 
 clean:

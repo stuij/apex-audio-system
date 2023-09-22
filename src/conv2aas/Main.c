@@ -1079,7 +1079,7 @@ int main(int argc, char *argv[]) {
       "not match Conv2AAS version\n#endif\n\nAAS_BEGIN_DECLS\n");
 
   fprintf(out_file_s,
-          ".TEXT\n.SECTION .rodata\n.ALIGN\n.ARM\n\n.ALIGN\n.EXTERN "
+          ".text\n.section .rodata\n.ALIGN\n.ARM\n\n.ALIGN\n.EXTERN "
           "AAS_lib_v113\n.GLOBAL AAS_data_v113\nAAS_data_v113:\n.word "
           "AAS_lib_v113\n");
 
