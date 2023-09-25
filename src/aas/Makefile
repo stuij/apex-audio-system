@@ -8,11 +8,10 @@ ifdef COMPILE_WITH_LLVM
 
 	AR = $(GBA_LLVM)/bin/llvm-ar
 else
-	AR = $(GBA_LLVM)/bin/llvm-ar
-
     # Tools and flags.
     # CROSS = arm-thumb-elf-
 	CROSS ?= arm-none-eabi-
+	AR = $(CROSS)ar
 endif
 
 # Name of output targets.
