@@ -1,5 +1,5 @@
-# comment out to compile with GCC
-export COMPILE_WITH_LLVM=1
+# uncomment out to compile with GCC
+# COMPILE_WITH_LLVM=1
 
 ifdef COMPILE_WITH_LLVM
 	ifeq ($(strip $(GBA_LLVM)),)
